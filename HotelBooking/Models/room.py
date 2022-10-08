@@ -1,5 +1,4 @@
 from __future__ import annotations
-from os import stat
 from typing import Optional, List
 from sqlmodel import Field, SQLModel, Session, select
 from Models.utils import get_engine

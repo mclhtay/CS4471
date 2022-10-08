@@ -4,8 +4,8 @@ from typing import Optional
 
 
 class Administrator(SQLModel, table=True):
-    administratorId: Optional[str] = Field(primary_key=True)
-    administratorPassword: str
+    administrator_id: str = Field(primary_key=True)
+    administrator_password: str
 
     def authenticate_admin(id: str, password: str) -> bool:
         engine = get_engine()
