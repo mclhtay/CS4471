@@ -1,4 +1,2 @@
-from HotelBooking.Models.room import Room
-
-rooms = Room().get_available_rooms()
-print(rooms)
+if __name__ == "__main__":
+    print("Hello!")

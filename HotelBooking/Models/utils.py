@@ -1,7 +1,7 @@
 from sqlmodel import create_engine
 
 
-DATABASE_ADDRESS = "sqlite:///Database/Hotel.db"
+DATABASE_ADDRESS = "sqlite:///HotelBooking/Database/Hotel.db"
 
 
 def get_engine():
