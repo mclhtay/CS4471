@@ -1,5 +1,9 @@
 #!/bin/bash
 
-docker build --tag hotel-app .
+pip3 install -r requirements.txt
 
-docker run hotel-app
+pre-commit install
+
+cd ..
+
+python3 -m HotelBooking.main
