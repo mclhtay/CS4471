@@ -1,9 +1,10 @@
 from sqlmodel import Field, SQLModel, create_engine, Session, select
 from Models.utils import get_engine
+from typing import Optional
 
 
 class Administrator(SQLModel, table=True):
-    administratorId: str = Field(primary_key=True)
+    administratorId: Optional[str] = Field(primary_key=True)
     administratorPassword: str
 
     def authenticate_admin(id: str, password: str) -> bool:
