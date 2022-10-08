@@ -1,7 +1,7 @@
 from __future__ import annotations
 from sqlmodel import Field, SQLModel, Session, select, update
-from Models.customer import Customer
-from Models.utils import get_engine
+from HotelBooking.Models.customer import Customer
+from HotelBooking.Models.utils import get_engine
 from typing import Optional
 
 BILL_STATUS = {
