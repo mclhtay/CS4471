@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import Optional, List
 from sqlmodel import Field, SQLModel, Session, select
-from Models.utils import get_engine
-from Models.customer import Customer
+from HotelBooking.Models.utils import get_engine
+from HotelBooking.Models.customer import Customer
 from typing import Optional
 
 ROOM_TYPE = {
@@ -65,13 +65,14 @@ class Room(SQLModel, table=True):
     def get_available_rooms(self) -> List[Room]:
         return self.get_room_with_status(ROOM_STATUS["AVAILABLE"])
 
-    def check_in_room(self, room_id: str):
-        self.update_room_status(room_id, ROOM_STATUS["CHECKED-IN"])
+    def check_in_room(self, room_id: str, customer_id: int):
+        self.update_room_status(
+            room_id, ROOM_STATUS["CHECKED-IN"], customer_id)
 
     def check_out_room(self, room_id: str):
         self.update_room_status(room_id, ROOM_STATUS["AVAILABLE"])
 
-    def reserve_room(self, room_id: str, customer_id: str):
+    def reserve_room(self, room_id: str, customer_id: int):
         self.update_room_status(room_id, ROOM_STATUS["RESERVED"], customer_id)
 
     def cancel_reservation(self, room_id: str):
