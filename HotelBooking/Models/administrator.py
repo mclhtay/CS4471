@@ -11,6 +11,6 @@ class Administrator(SQLModel, table=True):
         engine = get_engine()
         with Session(engine) as session:
             statement = select(Administrator).where(
-                Administrator.administratorId == id).where(Administrator.administratorPassword == password)
+                Administrator.administrator_id == id).where(Administrator.administrator_password == password)
             admin = session.exec(statement).first()
             return admin != None
