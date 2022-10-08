@@ -1,4 +1,4 @@
-from sqlmodel import Field, SQLModel, create_engine, Session, select
+from sqlmodel import Field, SQLModel, Session, select
 from HotelBooking.Models.utils import get_engine
 
 
