@@ -1,5 +1,5 @@
 #!/bin/bash
 
-docker build --tag hotel-booking .
+docker build --tag hotel-app .
 
-docker run hotel-booking
+docker run hotel-app
