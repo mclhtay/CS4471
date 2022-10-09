@@ -15,6 +15,7 @@ CREATE TABLE room
   room_type TEXT CHECK(room_type IN ('SINGLE', 'DOUBLE', 'DELUXE', 'PRESIDENTIAL')) NOT NULL,
   room_status TEXT CHECK(room_status IN('AVAILABLE', 'CHECKED-IN', 'RESERVED')) NOT NULL DEFAULT 'AVAILABLE',
   customer_id INTEGER,
+  status_time TEXT,
   FOREIGN KEY(customer_id) REFERENCES customer(customer_id)
 );
 
@@ -54,7 +55,7 @@ INSERT INTO room(room_id, room_type) VALUES("single15", "SINGLE");
 INSERT INTO room(room_id, room_type) VALUES("single16", "SINGLE");
 INSERT INTO room(room_id, room_type) VALUES("single17", "SINGLE");
 INSERT INTO room(room_id, room_type) VALUES("single18", "SINGLE");
-INSERT INTO room(room_id, room_type, room_status, customer_id) VALUES("single19", "SINGLE", "RESERVED", 1);
+INSERT INTO room(room_id, room_type, room_status, customer_id, status_time) VALUES("single19", "SINGLE", "RESERVED", 1, "2022-10-08 01:01:01");
 INSERT INTO room(room_id, room_type, room_status) VALUES("single20", "SINGLE", "AVAILABLE");
 
 INSERT INTO room(room_id, room_type, room_status) VALUES("double1", "DOUBLE", "AVAILABLE");
@@ -71,11 +72,11 @@ INSERT INTO room(room_id, room_type, room_status) VALUES("double10", "DOUBLE", "
 INSERT INTO room(room_id, room_type, room_status) VALUES("deluxe1", "DELUXE", "AVAILABLE");
 INSERT INTO room(room_id, room_type, room_status) VALUES("deluxe2", "DELUXE", "AVAILABLE");
 INSERT INTO room(room_id, room_type, room_status) VALUES("deluxe3", "DELUXE", "AVAILABLE");
-INSERT INTO room(room_id, room_type, room_status, customer_id) VALUES("deluxe4", "DELUXE", "CHECKED-IN", 2);
+INSERT INTO room(room_id, room_type, room_status, customer_id, status_time) VALUES("deluxe4", "DELUXE", "CHECKED-IN", 2, "2022-10-08 01:01:01");
 INSERT INTO room(room_id, room_type, room_status) VALUES("deluxe5", "DELUXE", "AVAILABLE");
 
 INSERT INTO room(room_id, room_type, room_status) VALUES("presidential1", "PRESIDENTIAL", "AVAILABLE");
-INSERT INTO room(room_id, room_type, room_status, customer_id) VALUES("presidential2", "PRESIDENTIAL", "CHECKED-IN", 3);
+INSERT INTO room(room_id, room_type, room_status, customer_id, status_time) VALUES("presidential2", "PRESIDENTIAL", "CHECKED-IN", 3, "2022-10-08 01:01:01");
 INSERT INTO room(room_id, room_type, room_status) VALUES("presidential3", "PRESIDENTIAL", "AVAILABLE");
 
 INSERT INTO bill( bill_status, bill_amount, customer_id) VALUES("PAID", 50.25, 1);
