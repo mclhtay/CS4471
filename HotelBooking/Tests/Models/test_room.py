@@ -215,6 +215,7 @@ class TestRoom:
             expected_room_id = "double1"
             expected_customer_id = 1
             expected_room_status = ROOM_STATUS["CHECKED-IN"]
+            expected_check_in_time = "2022-10-08 01:01:01"
             room_1 = Room(room_id=expected_room_id,
                           room_type=ROOM_TYPE["DOUBLE"])
             session.add(room_1)
@@ -222,12 +223,13 @@ class TestRoom:
             session.refresh(room_1)
             session.close()
 
-            Room().check_in_room(expected_room_id, expected_customer_id)
+            Room().check_in_room(expected_room_id, expected_customer_id, expected_check_in_time)
             res = Room().get_room_by_id(expected_room_id)
 
             assert res.room_id == expected_room_id
             assert res.customer_id == expected_customer_id
             assert res.room_status == expected_room_status
+            assert res.status_time == expected_check_in_time
 
     def test_check_out_room(self):
         with patch("HotelBooking.Models.room.get_engine") as mock_get_engine:
@@ -239,7 +241,7 @@ class TestRoom:
             expected_customer_id = 1
             expected_room_status = ROOM_STATUS["AVAILABLE"]
             room_1 = Room(room_id=expected_room_id,
-                          room_type=ROOM_TYPE["DOUBLE"], room_status=ROOM_STATUS["CHECKED-IN"], customer_id=expected_customer_id)
+                          room_type=ROOM_TYPE["DOUBLE"], room_status=ROOM_STATUS["CHECKED-IN"], customer_id=expected_customer_id, status_time="2022-10-08 01:01:01")
             session.add(room_1)
             session.commit()
             session.refresh(room_1)
@@ -251,6 +253,7 @@ class TestRoom:
             assert res.room_id == expected_room_id
             assert res.customer_id == None
             assert res.room_status == expected_room_status
+            assert res.status_time == None
 
     def test_reserve_room(self):
         with patch("HotelBooking.Models.room.get_engine") as mock_get_engine:
@@ -261,6 +264,7 @@ class TestRoom:
             expected_room_id = "double1"
             expected_customer_id = 1
             expected_room_status = ROOM_STATUS["RESERVED"]
+            expected_reservation_time = "2022-10-08 01:01:01"
             room_1 = Room(room_id=expected_room_id,
                           room_type=ROOM_TYPE["DOUBLE"], room_status=ROOM_STATUS["AVAILABLE"])
             session.add(room_1)
@@ -268,12 +272,13 @@ class TestRoom:
             session.refresh(room_1)
             session.close()
 
-            Room().reserve_room(expected_room_id, expected_customer_id)
+            Room().reserve_room(expected_room_id, expected_customer_id, expected_reservation_time)
             res = Room().get_room_by_id(expected_room_id)
 
             assert res.room_id == expected_room_id
             assert res.customer_id == expected_customer_id
             assert res.room_status == expected_room_status
+            assert res.status_time == expected_reservation_time
 
     def test_cancel_reservation(self):
         with patch("HotelBooking.Models.room.get_engine") as mock_get_engine:
@@ -297,3 +302,4 @@ class TestRoom:
             assert res.room_id == expected_room_id
             assert res.customer_id == None
             assert res.room_status == expected_room_status
+            assert res.status_time == None
