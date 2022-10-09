@@ -1,12 +1,10 @@
 # Hotel Booking
 
-## How to Run
-
 **NOTE**: all commands in scripts are linux commands, if you are running in windows power-shell you might need to find alternatives.
 
-1. You need docker
-2. After installing and have Docker on, `cd` into this folder
-3. `./run.sh`
+## How to Run
+
+1. `./run.sh`
 
 ## Database
 
