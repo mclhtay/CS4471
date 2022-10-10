@@ -1,9 +1,9 @@
 #!/bin/bash
 
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt --user
 
 pre-commit install
 
 cd ..
 
-python3 -m HotelBooking.main
+py -m HotelBooking

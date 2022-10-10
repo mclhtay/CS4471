@@ -62,7 +62,8 @@ class AuthenticationView(View):
                 authenticated = self.authentication_controller.authenticate_admin(
                     self.user_id, self.user_password)
             else:
-                pass
+                 authenticated = self.authentication_controller.authenticate_customer(
+                    self.user_id, self.user_password)
 
             self.authenticated = authenticated
             if not authenticated:

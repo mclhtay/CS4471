@@ -24,7 +24,7 @@ class Room(SQLModel, table=True):
     room_type: str
     room_status: str = Field(default="AVAILABLE")
     status_time: Optional[str]
-    customer_id: Optional[int] = Field(foreign_key=Customer.customer_id)
+    customer_id: Optional[str] = Field(foreign_key=Customer.customer_id)
 
     def get_room_with_status(self, room_status: ROOM_STATUS) -> List[Room]:
         engine = get_engine()
@@ -67,14 +67,14 @@ class Room(SQLModel, table=True):
     def get_available_rooms(self) -> List[Room]:
         return self.get_room_with_status(ROOM_STATUS["AVAILABLE"])
 
-    def check_in_room(self, room_id: str, customer_id: int, checked_in_time: str):
+    def check_in_room(self, room_id: str, customer_id: str, checked_in_time: str):
         self.update_room_status(
             room_id, ROOM_STATUS["CHECKED-IN"], customer_id, checked_in_time)
 
     def check_out_room(self, room_id: str):
         self.update_room_status(room_id, ROOM_STATUS["AVAILABLE"])
 
-    def reserve_room(self, room_id: str, customer_id: int, reserved_time: str):
+    def reserve_room(self, room_id: str, customer_id: str, reserved_time: str):
         self.update_room_status(
             room_id, ROOM_STATUS["RESERVED"], customer_id, reserved_time)
 
