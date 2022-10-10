@@ -1,6 +1,7 @@
 CREATE TABLE customer
 (
-  customer_id INTEGER NOT NULL PRIMARY KEY
+  customer_id VARCHAR(10) NOT NULL PRIMARY KEY,
+  customer_password VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE administrator
@@ -28,9 +29,22 @@ CREATE TABLE bill
   FOREIGN KEY(customer_id) REFERENCES customer(customer_id)
 );
 
-INSERT INTO customer(customer_id) VALUES(1);
-INSERT INTO customer(customer_id) VALUES(2);
-INSERT INTO customer(customer_id) VALUES(3);
+CREATE TABLE reservationHistroy
+(
+  customer_id VARCHAR(10) NOT NULL PRIMARY KEY,
+  room_id VARCHAR(20) NOT NULL PRIMARY KEY,
+  bill_id INTEGER PRIMARY KEY,
+  reservation_checkin INTEGER,
+  reservation_date INTEGER,
+  FOREIGN KEY(customer_id) REFERENCES customer(customer_id),
+  FOREIGN KEY(room_id) REFERENCES room(room_id),
+  FOREIGN KEY(bill_id) REFERENCES bill(bill_id)
+);
+
+
+INSERT INTO customer(customer_id, customer_password) VALUES("bob", "aPassword");
+INSERT INTO customer(customer_id, customer_password) VALUES("cart", "aPassword2");
+INSERT INTO customer(customer_id, customer_password) VALUES("boob", "p3");
 
 INSERT INTO administrator(administrator_id, administrator_password) VALUES("sjin85", "251022168");
 INSERT INTO administrator(administrator_id, administrator_password) VALUES("tbuwadi", "251023702");
@@ -55,7 +69,7 @@ INSERT INTO room(room_id, room_type) VALUES("single15", "SINGLE");
 INSERT INTO room(room_id, room_type) VALUES("single16", "SINGLE");
 INSERT INTO room(room_id, room_type) VALUES("single17", "SINGLE");
 INSERT INTO room(room_id, room_type) VALUES("single18", "SINGLE");
-INSERT INTO room(room_id, room_type, room_status, customer_id, status_time) VALUES("single19", "SINGLE", "RESERVED", 1, "2022-10-08 01:01:01");
+INSERT INTO room(room_id, room_type, room_status, customer_id, status_time) VALUES("single19", "SINGLE", "RESERVED", "bob", "2022-10-08 01:01:01");
 INSERT INTO room(room_id, room_type, room_status) VALUES("single20", "SINGLE", "AVAILABLE");
 
 INSERT INTO room(room_id, room_type, room_status) VALUES("double1", "DOUBLE", "AVAILABLE");
@@ -72,13 +86,13 @@ INSERT INTO room(room_id, room_type, room_status) VALUES("double10", "DOUBLE", "
 INSERT INTO room(room_id, room_type, room_status) VALUES("deluxe1", "DELUXE", "AVAILABLE");
 INSERT INTO room(room_id, room_type, room_status) VALUES("deluxe2", "DELUXE", "AVAILABLE");
 INSERT INTO room(room_id, room_type, room_status) VALUES("deluxe3", "DELUXE", "AVAILABLE");
-INSERT INTO room(room_id, room_type, room_status, customer_id, status_time) VALUES("deluxe4", "DELUXE", "CHECKED-IN", 2, "2022-10-08 01:01:01");
+INSERT INTO room(room_id, room_type, room_status, customer_id, status_time) VALUES("deluxe4", "DELUXE", "CHECKED-IN", "cart", "2022-10-08 01:01:01");
 INSERT INTO room(room_id, room_type, room_status) VALUES("deluxe5", "DELUXE", "AVAILABLE");
 
 INSERT INTO room(room_id, room_type, room_status) VALUES("presidential1", "PRESIDENTIAL", "AVAILABLE");
-INSERT INTO room(room_id, room_type, room_status, customer_id, status_time) VALUES("presidential2", "PRESIDENTIAL", "CHECKED-IN", 3, "2022-10-08 01:01:01");
+INSERT INTO room(room_id, room_type, room_status, customer_id, status_time) VALUES("presidential2", "PRESIDENTIAL", "CHECKED-IN", "boob", "2022-10-08 01:01:01");
 INSERT INTO room(room_id, room_type, room_status) VALUES("presidential3", "PRESIDENTIAL", "AVAILABLE");
 
-INSERT INTO bill( bill_status, bill_amount, customer_id) VALUES("PAID", 50.25, 1);
-INSERT INTO bill( bill_status, bill_amount, customer_id) VALUES("PAID", 12.25, 1);
-INSERT INTO bill( bill_amount, customer_id) VALUES(762.11, 3);
+INSERT INTO bill( bill_status, bill_amount, customer_id) VALUES("PAID", 50.25, "bob");
+INSERT INTO bill( bill_status, bill_amount, customer_id) VALUES("PAID", 12.25, "cart");
+INSERT INTO bill( bill_amount, customer_id) VALUES(762.11, "boob");
