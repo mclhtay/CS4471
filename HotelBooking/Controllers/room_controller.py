@@ -15,6 +15,7 @@ ROOM_PRICING = {
 
 
 class RoomController(Controller):
+    # TODO: Add customer validation logic when reserving/checking-in rooms
     room: Room
     bill_controller: BillController
 
@@ -31,6 +32,9 @@ class RoomController(Controller):
 
     def get_available_rooms(self) -> List[Room]:
         return self.room.get_available_rooms()
+
+    def get_reserved_room(self, customer_id: int) -> Room:
+        return self.room.get_reserved_room(customer_id)
 
     def check_in_room(self, room_id: str, customer_id: int):
         self.room.check_in_room(room_id, customer_id,
