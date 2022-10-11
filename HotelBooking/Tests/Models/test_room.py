@@ -172,6 +172,40 @@ class TestRoom:
             assert len(res) == 1
             assert room_4 in res
 
+    def test_get_reserved_room(self):
+        with patch("HotelBooking.Models.room.get_engine") as mock_get_engine:
+            mock_get_engine.return_value = create_engine("sqlite:///:memory:")
+            engine = mock_get_engine()
+            SQLModel.metadata.create_all(engine)
+            session = Session(engine)
+            room_1 = Room(room_id="double1", room_type=ROOM_TYPE["DOUBLE"])
+            room_2 = Room(room_id="presidential1",
+                          room_type=ROOM_TYPE["PRESIDENTIAL"])
+            room_3 = Room(room_id="single1", room_type=ROOM_TYPE["SINGLE"])
+            room_4 = Room(room_id="single2", room_type=ROOM_TYPE["SINGLE"], room_status=ROOM_STATUS[
+                          "RESERVED"], customer_id=1)
+            room_5 = Room(room_id="deluxe1", room_type=ROOM_TYPE["DELUXE"], room_status=ROOM_STATUS[
+                          "CHECKED-IN"], customer_id=2)
+            session.add(room_1)
+            session.add(room_2)
+            session.add(room_3)
+            session.add(room_4)
+            session.add(room_5)
+            session.commit()
+            session.refresh(room_1)
+            session.refresh(room_2)
+            session.refresh(room_3)
+            session.refresh(room_4)
+            session.refresh(room_5)
+            session.close()
+
+            res = Room().get_reserved_room(1)
+            res2 = Room().get_reserved_room(2)
+
+            assert res.customer_id == 1
+            assert res.room_status == ROOM_STATUS["RESERVED"]
+            assert res2 == None
+
     def test_get_available_rooms(self):
         with patch("HotelBooking.Models.room.get_engine") as mock_get_engine:
             mock_get_engine.return_value = create_engine("sqlite:///:memory:")

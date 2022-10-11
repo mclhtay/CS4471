@@ -8,6 +8,7 @@ from HotelBooking.Models.room import ROOM_TYPE
 PROMPT_KEY = {
     "OPERATIONS": "operations",
     "CHECK-IN": 'check-in',
+    "ROOM-CHECK-IN": 'room-check-in',
     "CHECK-OUT": 'check-out',
     "CUSTOMER": "customer"
 }
@@ -21,9 +22,14 @@ PROMPTS = {
         ]
     }],
     "check-in": [{
+        'type': 'confirm',
+        'message': 'Did the customer make a reservation?',
+        'name': 'check-in',
+    }],
+    "room-check-in": [{
         'type': 'list',
         'message': 'What type of room?',
-        'name': 'check-in',
+        'name': 'room-check-in',
         'choices': [],
         'filter': lambda choice: choice.split(" ")[0].upper(),
     }],
@@ -61,46 +67,12 @@ class CheckedInRoomsView(View):
         getattr(self, callable)()
 
     def check_in_customer(self):
-        available_rooms = self.room_controller.get_available_rooms()
-        singles = [
-            room for room in available_rooms if room.room_type == ROOM_TYPE["SINGLE"]]
-        doubles = [
-            room for room in available_rooms if room.room_type == ROOM_TYPE["DOUBLE"]]
-        deluxes = [
-            room for room in available_rooms if room.room_type == ROOM_TYPE["DELUXE"]]
-        presidentials = [
-            room for room in available_rooms if room.room_type == ROOM_TYPE["PRESIDENTIAL"]]
-
-        PROMPTS[PROMPT_KEY["CHECK-IN"]][0]['choices'] = [
-            {
-                "name": f'Single ({len(singles)} available)',
-                'disabled': "Not available" if len(singles) == 0 else False
-            },
-            {
-                "name": f'Double ({len(doubles)} available)',
-                'disabled': "Not available" if len(doubles) == 0 else False
-            },
-            {
-                "name": f'Deluxe ({len(deluxes)} available)',
-                'disabled': "Not available" if len(deluxes) == 0 else False
-            },
-            {
-                "name": f'Presidential ({len(presidentials)} available)',
-                'disabled': "Not available" if len(presidentials) == 0 else False
-            },
-            {
-                "name": "Back"
-            }
-        ]
-
-        room_choice = self.prompt_and_get_answer(PROMPT_KEY['CHECK-IN'])
-        if room_choice != "BACK":
-            room_id = [
-                room.room_id for room in available_rooms if room.room_type == room_choice].pop()
-            customer_id = self.prompt_and_get_answer(PROMPT_KEY['CUSTOMER'])
-            self.room_controller.check_in_room(room_id, customer_id)
-            print("\nSuccess!\n")
-        self.show()
+        check_in_choice = self.prompt_and_get_answer(
+            PROMPT_KEY['CHECK-IN'])
+        if check_in_choice:
+            self.reserved_check_in()
+        else:
+            self.new_check_in()
 
     def check_out_customer(self):
         checked_in_rooms = self.room_controller.get_checked_in_rooms()
@@ -123,6 +95,57 @@ class CheckedInRoomsView(View):
                 self.room_controller.check_out_room(room_id)
                 print("\nSuccess!\n")
             self.show()
+
+    def new_check_in(self):
+        available_rooms = self.room_controller.get_available_rooms()
+        singles = [
+            room for room in available_rooms if room.room_type == ROOM_TYPE["SINGLE"]]
+        doubles = [
+            room for room in available_rooms if room.room_type == ROOM_TYPE["DOUBLE"]]
+        deluxes = [
+            room for room in available_rooms if room.room_type == ROOM_TYPE["DELUXE"]]
+        presidentials = [
+            room for room in available_rooms if room.room_type == ROOM_TYPE["PRESIDENTIAL"]]
+
+        PROMPTS[PROMPT_KEY["ROOM-CHECK-IN"]][0]['choices'] = [
+            {
+                "name": f'Single ({len(singles)} available)',
+                'disabled': "Not available" if len(singles) == 0 else False
+            },
+            {
+                "name": f'Double ({len(doubles)} available)',
+                'disabled': "Not available" if len(doubles) == 0 else False
+            },
+            {
+                "name": f'Deluxe ({len(deluxes)} available)',
+                'disabled': "Not available" if len(deluxes) == 0 else False
+            },
+            {
+                "name": f'Presidential ({len(presidentials)} available)',
+                'disabled': "Not available" if len(presidentials) == 0 else False
+            },
+            {
+                "name": "Back"
+            }
+        ]
+        room_choice = self.prompt_and_get_answer(PROMPT_KEY['ROOM-CHECK-IN'])
+        if room_choice != "BACK":
+            room_id = [
+                room.room_id for room in available_rooms if room.room_type == room_choice].pop()
+            customer_id = self.prompt_and_get_answer(PROMPT_KEY['CUSTOMER'])
+            self.room_controller.check_in_room(room_id, customer_id)
+            print("\nSuccess!\n")
+        self.show()
+
+    def reserved_check_in(self):
+        customer_id = self.prompt_and_get_answer(PROMPT_KEY['CUSTOMER'])
+        room = self.room_controller.get_reserved_room(customer_id)
+        if room is None:
+            print("This customer does not have a reservation!")
+        else:
+            self.room_controller.check_in_room(room.room_id, customer_id)
+            print("\nSuccess!\n")
+        self.show()
 
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])
