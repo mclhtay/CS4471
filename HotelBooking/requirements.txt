@@ -3,3 +3,4 @@ pyfiglet
 PyInquirer
 pre-commit
 pytest
+python-dateutil
