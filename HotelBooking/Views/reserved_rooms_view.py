@@ -174,7 +174,7 @@ class ReservedRoomsView(View):
         else:
             PROMPTS[PROMPT_KEY["CANCEL"]][0]['choices'] = [
                 {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", price: "+self.bill.get_bill(reservation.bill_id).bill_amount
+                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", price: "+str(self.bill.get_bill(reservation.bill_id).bill_amount)
                 }
                 for reservation in reservations
             ]
