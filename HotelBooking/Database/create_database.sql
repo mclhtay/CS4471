@@ -30,7 +30,7 @@ CREATE TABLE roomType
 CREATE TABLE bill
 (
   bill_id INTEGER PRIMARY KEY,
-  bill_status TEXT CHECK(bill_status IN ('PAID', 'OUTSTANDING', 'CANCELED')) NOT NULL DEFAULT "OUTSTANDING",
+  bill_status TEXT CHECK(bill_status IN ('PAID', 'OUTSTANDING', 'CANCELED', 'refunded')) NOT NULL DEFAULT "OUTSTANDING",
   bill_amount FLOAT NOT NULL,
   customer_id INTEGER NOT NULL,
   FOREIGN KEY(customer_id) REFERENCES customer(customer_id)

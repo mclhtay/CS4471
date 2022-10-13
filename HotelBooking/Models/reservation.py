@@ -58,7 +58,34 @@ class Reservation(SQLModel, table=True):
         session.commit()
         session.close()
 
+    def update_reservation_start_date(self, reservation_id, newStartDate):
+        reservation = self.get_reservation_by_id(reservation_id)
+        reservation.reservation_checkin_date = newStartDate
+        engine = get_engine()
+        session = Session(engine)
+        session.add(reservation)
+        session.commit()
+        session.close()
 
+    def update_reservation_duration(self, reservation_id, newDuration):
+        reservation = self.get_reservation_by_id(reservation_id)
+        reservation.reservation_stay_date=newDuration
+        engine = get_engine()
+        session = Session(engine)
+        session.add(reservation)
+        session.commit()
+        session.close()
+
+    def update_Bill(self, reservation_id, bill_id):
+        reservation = self.get_reservation_by_id(reservation_id)
+        if(reservation.bill_id!=bill_id):
+            reservation.bill_id=bill_id
+        engine = get_engine()
+        session = Session(engine)
+        session.add(reservation)
+        session.commit()
+        session.close()
+        
     def create_reservation(self, status, customer_id, room_id, bill_id, reservation_checkin_date, reservation_stay_date) -> Reservation:
         engine = get_engine()
         session = Session(engine)
