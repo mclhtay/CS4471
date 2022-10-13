@@ -6,7 +6,8 @@ from typing import Optional
 
 BILL_STATUS = {
     "OUTSTANDING": "OUTSTANDING",
-    "PAID": "PAID"
+    "PAID": "PAID",
+    "CANCELED" : "CANCELED"
 }
 
 
@@ -14,7 +15,7 @@ class Bill(SQLModel, table=True):
     bill_id: Optional[int] = Field(default=None, primary_key=True)
     bill_status: str = Field(default='OUTSTANDING')
     bill_amount: float
-    customer_id: int = Field(foreign_key=Customer.customer_id)
+    customer_id: str = Field(foreign_key=Customer.customer_id)
 
     def get_bill(self, bill_id: int) -> Bill:
         engine = get_engine()
@@ -42,6 +43,15 @@ class Bill(SQLModel, table=True):
         engine = get_engine()
         session = Session(engine)
         bill.bill_status = BILL_STATUS["PAID"]
+        session.add(bill)
+        session.commit()
+        session.close()
+        
+    def cancel_bill(self, bill_id: int):
+        bill = self.get_bill(bill_id)
+        engine = get_engine()
+        session = Session(engine)
+        bill.bill_status = BILL_STATUS["CANCELED"]
         session.add(bill)
         session.commit()
         session.close()

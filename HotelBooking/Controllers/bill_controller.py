@@ -14,3 +14,5 @@ class BillController(Controller):
 
     def pay_bill(self, bill_id: int):
         self.bill.pay_bill(bill_id)
+    def cancel_bill(self, bill_id: int):
+            self.bill.cancel_bill(bill_id)
