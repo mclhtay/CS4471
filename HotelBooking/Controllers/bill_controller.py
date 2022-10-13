@@ -12,7 +12,11 @@ class BillController(Controller):
     def create_bill(self, customer_id: int, amount: float) -> Bill:
         return self.bill.create_bill(customer_id, amount)
 
+    def modify(self, bill_id: int, amount: float) -> Bill:
+        return self.bill.modifyBill(bill_id, amount)
+
     def pay_bill(self, bill_id: int):
         self.bill.pay_bill(bill_id)
+
     def cancel_bill(self, bill_id: int):
-            self.bill.cancel_bill(bill_id)
+        self.bill.cancel_bill(bill_id)

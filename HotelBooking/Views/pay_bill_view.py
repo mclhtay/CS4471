@@ -71,7 +71,7 @@ PROMPTS = {
 }
 
 
-class ReservedRoomsView(View):
+class PayBillView(View):
     reservation_controller: ReservationController
     room_controller: RoomController
     userID: str

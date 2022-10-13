@@ -49,9 +49,6 @@ class RoomController(Controller):
         self.room.check_in_room(room_id, customer_id,
                                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-    def get_reservation(self, userID=None) -> List[Reservation]:
-        return self.reservation.get_reservation_with_status("OPEN",userID)
-
     def check_out_room(self, room_id: str):
         check_out_time = datetime.now()
         checked_in_room = self.room.get_room_by_id(room_id)
@@ -61,18 +58,4 @@ class RoomController(Controller):
             stay_duration.total_seconds() / 3600.0 * ROOM_PRICING[checked_in_room.room_type], 2)
         self.bill_controller.create_bill(checked_in_room.customer_id, cost)
         self.room.check_out_room(room_id)
-
-    def reserve_room(self, room_id: str, customer_id: int, startDate, duration: int):
-        self.room.update_room_status(room_id, "RESERVED", customer_id)
-        r = self.room.get_room_by_id(room_id)
-        price = float(self.roomType.get_Price(r.room_type))
-        duration = int(duration)
-        bill:Bill = self.bill_controller.create_bill(customer_id, price*duration)
-        self.reservation.create_reservation("OPEN", customer_id, room_id, bill.bill_id, startDate, duration)
-
-    def cancel_reservation(self, room_id: str, reservation_id:int):
-        print(reservation_id)
-        self.room.update_room_status(room_id, "AVAILABLE")
-        self.reservation.update_reservation_status(reservation_id, "CANCELED")
-        self.bill_controller.cancel_bill(self.reservation.get_reservation_by_id(reservation_id).bill_id)
 
