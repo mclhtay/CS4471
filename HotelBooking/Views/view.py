@@ -9,7 +9,6 @@ class View:
     operation_options: List[Tuple[str, str]]
     parent_view: View
     history: List[View]
-
     def __init__(self, history: List[View] = [], caller: View = None) -> None:
         self.history = history
         if caller != None:
