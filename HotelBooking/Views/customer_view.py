@@ -1,4 +1,6 @@
 from HotelBooking.Views.modify_reservation_view import ModifyReservationView
+from HotelBooking.Views.pay_bill_view import PayBillView
+from HotelBooking.Views.reserved_history_view import ReservationHistoryView
 from HotelBooking.Views.utils import big_print, medium_print
 from HotelBooking.Views.view import View
 from HotelBooking.Views.checked_in_rooms_view import CheckedInRoomsView
@@ -24,8 +26,11 @@ PROMPTS = {
 class CustomerView(View):
     userID:str
     view_options: List[Tuple[str, View]] = [
-        ("Book/Cancel/ reservation", ReservedRoomsView),
-        ("Modify reservation", ModifyReservationView)
+        ("Book/Cancel reservation", ReservedRoomsView),
+        ("Modify reservation", ModifyReservationView),
+        ("Check/Pay Bill", PayBillView),
+        ("Check reservation/stay history", ReservationHistoryView)
+        
     ]
     operation_options: List[Tuple[str, str]] = [
         ("Quit", 'quit_system'),

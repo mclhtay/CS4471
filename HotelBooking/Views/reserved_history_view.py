@@ -10,8 +10,8 @@ from HotelBooking.Models.room import ROOM_TYPE
 from HotelBooking.Models.roomType import RoomType
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
-    "PAY_BILL": 'payBill',
-    "LIST_BILL":"listBill",
+    "LIST_RESERVATION":"listReservation",
+    "LIST_STAY":"listStay",
     "BACK": "back",
     "FINAL_CHECK":"finalCheck"
 }
@@ -24,21 +24,20 @@ PROMPTS = {
         'choices': [
         ]
     }],
-    'payBill': [{
+    'listReservation': [{
         'type': 'list',
-        'message': "Which bill do you want to pay?",
-        'name': 'payBill',
+        'message': "List Reservation:",
+        'name': 'listReservation',
         'choices': [
         ],
     }],
-    'listBill': [{
+    'listStay': [{
         'type': 'list',
-        'message': "List Bill:",
-        'name': 'listBill',
+        'message': "List Stay:",
+        'name': 'listStay',
         'choices': [
         ],
     }],
-    
     "finalCheck": [{
         'type': 'list',
         'message': "The total is ",
@@ -56,7 +55,7 @@ PROMPTS = {
 }
 
 
-class PayBillView(View):
+class ReservationHistoryView(View):
     reservation_controller: ReservationController
     room_controller: RoomController
     bill_controller: BillController
@@ -66,8 +65,8 @@ class PayBillView(View):
     bill:Bill
     roomType: RoomType
     operation_options: List[Tuple[str, str]] = [
-        ("Pay a bill", 'payBill'),
-        ("List out all the bills", 'listBill'),
+        ("List all reservation", 'listReservation'),
+        ("List stay", 'listStay'),
         ("Back", 'prev_view'),
     ]
 
@@ -91,41 +90,31 @@ class PayBillView(View):
         
         getattr(self, callable)()
 
-    def payBill(self):
-        available_bill = self.bill_controller.get_available_bill(self.userID)
-        if len(available_bill) == 0:
-            print("\nThere are no bill\n")
+    def listStay(self):
+        reservations = self.reservation_controller.get_stay(self.userID)
+        if len(reservations) == 0:
+            print("\nThere are no stay history\n")
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
 
         else:
-            PROMPTS[PROMPT_KEY["PAY_BILL"]][0]['choices'] = [
-                {
-                    "name": "Bill:"+str(bill.bill_id)+", with amount: "+str(bill.bill_amount)+" is unpaid"
-                }
-                for bill in available_bill
-            ]
-            PROMPTS[PROMPT_KEY["PAY_BILL"]][0]['choices'].append(
-                {
-                    "name": "Back"
-                }
-            )
-            answer:str=self.prompt_and_get_answer(PROMPT_KEY['PAY_BILL'])
-            if answer != "Back":
-                answerList:List[str] = answer.replace(':', ',').split(',')
-                billID=answerList[1].strip()
-                self.bill_controller.pay_bill(billID)
-                print("\nSuccess!\n")
+            for reservation in reservations:
+                print("stay with reservation id:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with room id:"+
+                    str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+"\n")
+
+            
+            self.prompt_and_get_answer(PROMPT_KEY['BACK'])
         self.show()
 
-    def listBill(self):
-        all_bill = self.bill_controller.get_all_bill(self.userID)
-        if len(all_bill) == 0:
-            print("\nThere are no bill\n")
+    def listReservation(self):
+        reservations = self.reservation_controller.get_reservation(self.userID)
+        if len(reservations) == 0:
+            print("\nThere are no reservation\n")
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
 
         else:
-            for bill in all_bill:
-                print("Bill:"+str(bill.bill_id)+", with amount: "+str(bill.bill_amount)+" is "+bill.bill_status+"\n")
+            for reservation in reservations:
+                print("reservation:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with status: "+reservation.status+", with room id:"+
+                    str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+"\n")
 
             
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])

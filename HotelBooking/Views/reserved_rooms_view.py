@@ -141,29 +141,19 @@ class ReservedRoomsView(View):
                 room.room_id for room in available_rooms if room.room_type == room_choice].pop()
             if self.userID==None:
                 self.userID = self.prompt_and_get_answer(PROMPT_KEY['CUSTOMER'])
-            if self.startDate==None:
-                self.startDate = self.prompt_and_get_answer(PROMPT_KEY['STARTDATE'])
-            if self.duration==None:
-                self.duration = int(self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
-            PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['choices'].append(
-                {
-                    "name": "Continue"
-                }
-            )
+            self.startDate = self.prompt_and_get_answer(PROMPT_KEY['STARTDATE'])
+            self.duration = int(self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
+            
             current_room_type=self.room_controller.get_room(room_id).room_type
-            PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['message']+=str(self.duration* self.roomType.get_Price(current_room_type))
-            PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['choices'].append(
-                {
-                    "name": "Back"
-                }
-            )
+            PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['message']="The total is "+str(self.duration* self.roomType.get_Price(current_room_type))
+            
             if self.prompt_and_get_answer(PROMPT_KEY['FINAL_CHECK']) =="Continue":
                 self.reservation_controller.reserve_room(room_id, self.userID, self.startDate, self.duration)
                 print("\nSuccess!\n")
         self.show()
 
     def cancel_reservation(self):
-        reservations = self.reservation_controller.get_reservation(self.userID)
+        reservations = self.reservation_controller.get_open_reservation(self.userID)
         if len(reservations) == 0:
             print("\nThere are no reservation\n")
             PROMPTS[PROMPT_KEY["BACK"]][0]['choices'].append(
@@ -204,3 +194,14 @@ class ReservedRoomsView(View):
             }
             choices.append(choice)
         PROMPTS[PROMPT_KEY['OPERATIONS']][0]['choices'] = choices
+        PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['choices']=[]
+        PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['choices'].append(
+            {
+                "name": "Continue"
+            }
+        )
+        PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['choices'].append(
+            {
+                "name": "Back"
+            }
+        )
