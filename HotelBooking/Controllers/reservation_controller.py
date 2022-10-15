@@ -33,9 +33,12 @@ class ReservationController(Controller):
         self.roomType = RoomType()
         self.reservation = Reservation()
 
-    def get_reservation(self, userID=None) -> List[Reservation]:
+    def get_open_reservation(self, userID=None) -> List[Reservation]:
         return self.reservation.get_reservation_with_status("OPEN",userID)
-
+    def get_reservation(self, userID=None) -> List[Reservation]:
+        return self.reservation.get_reservation_by_customer_id(userID)
+    def get_stay(self, userID=None) -> List[Reservation]:
+        return self.reservation.get_reservation_with_status("CLOSED",userID)
     def reserve_room(self, room_id: str, customer_id: int, startDate, duration: int):
         self.room.update_room_status(room_id, "RESERVED", customer_id)
         r = self.room.get_room_by_id(room_id)
@@ -45,22 +48,19 @@ class ReservationController(Controller):
         self.reservation.create_reservation("OPEN", customer_id, room_id, bill.bill_id, startDate, duration)
 
     def cancel_reservation(self, room_id: str, reservation_id:int):
-        print(reservation_id)
         self.room.update_room_status(room_id, "AVAILABLE")
         self.reservation.update_reservation_status(reservation_id, "CANCELED")
         self.bill_controller.cancel_bill(self.reservation.get_reservation_by_id(reservation_id).bill_id)
 
     def modify_reservation_date(self, reservation_id:int, newStartDate:str):
-        print(reservation_id)
         self.reservation.update_reservation_start_date(reservation_id, newStartDate)
         self.bill_controller
 
     def modify_reservation_duration(self, reservation_id:int, newDuration:int):
-        print(reservation_id)
         self.reservation.update_reservation_duration(reservation_id, newDuration)
         currentReservation = self.reservation.get_reservation_by_id(reservation_id)
         price:float=self.roomType.get_Price(self.room.get_room_by_id(currentReservation.room_id).room_type)
         self.bill_controller
-        newBill=self.bill_controller.modify(self.reservation.get_reservation_by_id(reservation_id).bill_id, price)
-        self.reservation.update_Bill(reservation_id, newBill.bill_id)
+        newBillID=self.bill_controller.modify(self.reservation.get_reservation_by_id(reservation_id).bill_id, price*newDuration)
+        self.reservation.update_Bill(reservation_id, newBillID)
 

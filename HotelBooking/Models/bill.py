@@ -2,7 +2,7 @@ from __future__ import annotations
 from sqlmodel import Field, SQLModel, Session, select, update
 from HotelBooking.Models.customer import Customer
 from HotelBooking.Models.utils import get_engine
-from typing import Optional
+from typing import List, Optional
 
 BILL_STATUS = {
     "OUTSTANDING": "OUTSTANDING",
@@ -25,7 +25,20 @@ class Bill(SQLModel, table=True):
         bill = session.exec(statement).first()
         session.close()
         return bill
-
+    def get_available_bill(self, userID) -> List[Bill]:
+        engine = get_engine()
+        session = Session(engine)
+        statement = select(Bill).where(Bill.bill_status == BILL_STATUS["OUTSTANDING"]).where(Bill.customer_id==userID)
+        bill = session.exec(statement).all()
+        session.close()
+        return bill
+    def get_all_bill(self, userID) -> List[Bill]:
+        engine = get_engine()
+        session = Session(engine)
+        statement = select(Bill).where(Bill.customer_id==userID)
+        bill = session.exec(statement).all()
+        session.close()
+        return bill
     def create_bill(self, customer_id: str, amount: float) -> Bill:
         engine = get_engine()
         session = Session(engine)
@@ -75,5 +88,6 @@ class Bill(SQLModel, table=True):
         session = Session(engine)
         session.add(bill)
         session.commit()
+        self.bill_id=bill.bill_id
         session.close()
-        return bill
+        return self.bill_id

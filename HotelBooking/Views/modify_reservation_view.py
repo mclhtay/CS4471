@@ -18,7 +18,7 @@ PROMPT_KEY = {
 PROMPTS = {
     'operations': [{
         'type': 'list',
-        'message': "modify a reservation for a guest",
+        'message': "",
         'name': 'operations',
         'choices': [
         ]
@@ -88,7 +88,7 @@ class ModifyReservationView(View):
         getattr(self, callable)()
 
     def changeStartDate(self):
-        reservations = self.reservation_controller.get_reservation(self.userID)
+        reservations = self.reservation_controller.get_open_reservation(self.userID)
         if len(reservations) == 0:
             print("\nThere are no reservation\n")
             PROMPTS[PROMPT_KEY["BACK"]][0]['choices'].append(
@@ -120,7 +120,7 @@ class ModifyReservationView(View):
         self.show()
 
     def changeDuration(self):
-        reservations = self.reservation_controller.get_reservation(self.userID)
+        reservations = self.reservation_controller.get_open_reservation(self.userID)
         if len(reservations) == 0:
             print("\nThere are no reservation\n")
             PROMPTS[PROMPT_KEY["BACK"]][0]['choices'].append(
@@ -151,17 +151,9 @@ class ModifyReservationView(View):
                 reservationID=answerList[2].strip()
                 roomID=answerList[0].strip()
                 current_room_type=self.room_controller.get_room(roomID).room_type
-                PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['message']+=str(duration* self.roomType.get_Price(current_room_type))
-                PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['choices'].append(
-                {
-                    "name": "Continue"
-                }
-                )
-                PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['choices'].append(
-                    {
-                        "name": "Back",
-                    }
-                )
+                i:int=duration* self.roomType.get_Price(current_room_type)
+                PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['message']="The total is "+str(i)
+                
                 if self.prompt_and_get_answer(PROMPT_KEY['FINAL_CHECK']) =="Continue":
                     self.reservation_controller.modify_reservation_duration(reservationID, duration)
                     print("\nSuccess!\n")
@@ -179,3 +171,14 @@ class ModifyReservationView(View):
             }
             choices.append(choice)
         PROMPTS[PROMPT_KEY['OPERATIONS']][0]['choices'] = choices
+        PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['choices']=[]
+        PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['choices'].append(
+            {
+                "name": "Continue"
+            }
+        )
+        PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['choices'].append(
+            {
+                "name": "Back",
+            }
+        )
