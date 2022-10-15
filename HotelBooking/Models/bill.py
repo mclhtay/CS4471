@@ -83,7 +83,7 @@ class Bill(SQLModel, table=True):
         session.commit()
         session.close()
 
-    def modifyBill(self, bill_id: int, billAmount: int):
+    def modifyBill(self, bill_id: int, billAmount: float):
         bill = self.get_bill(bill_id)
         if (bill.bill_status == BILL_STATUS["PAID"]):
             self.refund_bill(bill.bill_id)
