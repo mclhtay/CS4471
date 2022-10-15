@@ -1,5 +1,3 @@
-from HotelBooking.Controllers.reservation_controller import ReservationController
-from HotelBooking.Controllers.room_controller import RoomController
 from HotelBooking.Controllers.bill_controller import BillController
 from HotelBooking.Views.view import View
 from typing import Tuple, List
@@ -55,8 +53,6 @@ PROMPTS = {
 
 
 class PayBillView(View):
-    reservation_controller: ReservationController
-    room_controller: RoomController
     bill_controller: BillController
     userID: str
     startDate: str
@@ -71,13 +67,11 @@ class PayBillView(View):
     def __init__(self, history=[], caller=None, userID=None, startDate=None, duration=None) -> None:
         super().__init__(history, caller)
         self.initiate_options()
-        self.room_controller = RoomController()
         self.userID = userID
         self.startDate = startDate
         self.duration = duration
         self.roomType = RoomType()
         self.bill_controller = BillController()
-        self.reservation_controller = ReservationController()
 
     def show(self):
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
