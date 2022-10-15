@@ -69,3 +69,14 @@ class TestRoomController:
         controller.cancel_reservation(mock_id)
 
         mock_cancel_reservation.assert_called_once_with(mock_id)
+
+    @patch.object(Room, 'get_reserved_room')
+    def test_get_reserved_room(self, mock_get_reserved_room):
+        mock_get_reserved_room.return_value = None
+        mock_id = 1
+
+        controller = RoomController()
+        res = controller.get_reserved_room(mock_id)
+
+        mock_get_reserved_room.assert_called_once_with(mock_id)
+        assert res == None
