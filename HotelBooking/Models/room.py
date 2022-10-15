@@ -63,10 +63,20 @@ class Room(SQLModel, table=True):
 
     def get_reserved_rooms(self, userID=None) -> List[Room]:
         return self.get_room_with_status(ROOM_STATUS["RESERVED"], userID)
+        
     def get_available_rooms(self) -> List[Room]:
         return self.get_room_with_status(ROOM_STATUS["AVAILABLE"])
 
-    def check_in_room(self, room_id: str, customer_id: str, checked_in_time: str):
+    def get_reserved_room(self, customer_id: int) -> Room:
+        engine = get_engine()
+        session = Session(engine)
+        statement = select(Room).where(
+            Room.customer_id == customer_id).where(Room.room_status == ROOM_STATUS["RESERVED"])
+        room = session.exec(statement).first()
+        session.close()
+        return room
+
+    def check_in_room(self, room_id: str, customer_id: int, checked_in_time: str):
         self.update_room_status(
             room_id, ROOM_STATUS["CHECKED-IN"], customer_id, checked_in_time)
 
