@@ -63,7 +63,7 @@ class AuthenticationView(View):
                 authenticated = self.authentication_controller.authenticate_admin(
                     self.user_id, self.user_password)
             else:
-                 authenticated = self.authentication_controller.authenticate_customer(
+                authenticated = self.authentication_controller.authenticate_customer(
                     self.user_id, self.user_password)
 
             self.authenticated = authenticated
@@ -74,7 +74,6 @@ class AuthenticationView(View):
             AdminView(self.history, self).show()
         else:
             CustomerView(self.history, self, self.user_id).show()
-
 
     def initiate_options(self):
         for view_option in self.view_options:

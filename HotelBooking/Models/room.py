@@ -30,8 +30,8 @@ class Room(SQLModel, table=True):
         session = Session(engine)
         statement = select(Room).where(
             Room.room_status == room_status)
-        if userID!=None:
-            statement=statement.where(Room.customer_id==userID)
+        if userID != None:
+            statement = statement.where(Room.customer_id == userID)
 
         rooms = session.exec(statement).all()
         session.close()
@@ -43,7 +43,7 @@ class Room(SQLModel, table=True):
         statement = select(Room).where(
             Room.room_id == room_id)
         room = session.exec(statement).first()
-        
+
         session.close()
         return room
 
@@ -63,7 +63,7 @@ class Room(SQLModel, table=True):
 
     def get_reserved_rooms(self, userID=None) -> List[Room]:
         return self.get_room_with_status(ROOM_STATUS["RESERVED"], userID)
-        
+
     def get_available_rooms(self) -> List[Room]:
         return self.get_room_with_status(ROOM_STATUS["AVAILABLE"])
 

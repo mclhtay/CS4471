@@ -13,5 +13,3 @@ class Administrator(SQLModel, table=True):
                 Administrator.administrator_id == id).where(Administrator.administrator_password == password)
             admin = session.exec(statement).first()
             return admin != None
-
-

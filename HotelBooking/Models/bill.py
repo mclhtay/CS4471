@@ -7,7 +7,7 @@ from typing import List, Optional
 BILL_STATUS = {
     "OUTSTANDING": "OUTSTANDING",
     "PAID": "PAID",
-    "CANCELED" : "CANCELED",
+    "CANCELED": "CANCELED",
     "REFUNDED": "REFUNDED"
 }
 
@@ -25,20 +25,24 @@ class Bill(SQLModel, table=True):
         bill = session.exec(statement).first()
         session.close()
         return bill
+
     def get_available_bill(self, userID) -> List[Bill]:
         engine = get_engine()
         session = Session(engine)
-        statement = select(Bill).where(Bill.bill_status == BILL_STATUS["OUTSTANDING"]).where(Bill.customer_id==userID)
+        statement = select(Bill).where(
+            Bill.bill_status == BILL_STATUS["OUTSTANDING"]).where(Bill.customer_id == userID)
         bill = session.exec(statement).all()
         session.close()
         return bill
+
     def get_all_bill(self, userID) -> List[Bill]:
         engine = get_engine()
         session = Session(engine)
-        statement = select(Bill).where(Bill.customer_id==userID)
+        statement = select(Bill).where(Bill.customer_id == userID)
         bill = session.exec(statement).all()
         session.close()
         return bill
+
     def create_bill(self, customer_id: str, amount: float) -> Bill:
         engine = get_engine()
         session = Session(engine)
@@ -60,7 +64,7 @@ class Bill(SQLModel, table=True):
         session.add(bill)
         session.commit()
         session.close()
-        
+
     def cancel_bill(self, bill_id: int):
         bill = self.get_bill(bill_id)
         engine = get_engine()
@@ -69,6 +73,7 @@ class Bill(SQLModel, table=True):
         session.add(bill)
         session.commit()
         session.close()
+
     def refund_bill(self, bill_id: int):
         bill = self.get_bill(bill_id)
         engine = get_engine()
@@ -78,9 +83,9 @@ class Bill(SQLModel, table=True):
         session.commit()
         session.close()
 
-    def modifyBill(self, bill_id:int, billAmount:int):
+    def modifyBill(self, bill_id: int, billAmount: int):
         bill = self.get_bill(bill_id)
-        if(bill.bill_status==BILL_STATUS["PAID"]):
+        if (bill.bill_status == BILL_STATUS["PAID"]):
             self.refund_bill(bill.bill_id)
             return self.create_bill(bill.customer_id, billAmount)
         bill.bill_amount = billAmount
@@ -88,6 +93,6 @@ class Bill(SQLModel, table=True):
         session = Session(engine)
         session.add(bill)
         session.commit()
-        self.bill_id=bill.bill_id
+        self.bill_id = bill.bill_id
         session.close()
         return self.bill_id

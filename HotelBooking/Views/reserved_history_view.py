@@ -1,8 +1,7 @@
-from HotelBooking.Controllers import bill_controller
+from HotelBooking.Controllers.bill_controller import BillController
 from HotelBooking.Controllers.reservation_controller import ReservationController
 from HotelBooking.Controllers.room_controller import RoomController
 from HotelBooking.Controllers.bill_controller import BillController
-from HotelBooking.Models.bill import Bill
 from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
@@ -10,10 +9,10 @@ from HotelBooking.Models.room import ROOM_TYPE
 from HotelBooking.Models.roomType import RoomType
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
-    "LIST_RESERVATION":"listReservation",
-    "LIST_STAY":"listStay",
+    "LIST_RESERVATION": "listReservation",
+    "LIST_STAY": "listStay",
     "BACK": "back",
-    "FINAL_CHECK":"finalCheck"
+    "FINAL_CHECK": "finalCheck"
 }
 
 PROMPTS = {
@@ -62,7 +61,6 @@ class ReservationHistoryView(View):
     userID: str
     startDate: str
     duration: int
-    bill:Bill
     roomType: RoomType
     operation_options: List[Tuple[str, str]] = [
         ("List all reservation", 'listReservation'),
@@ -74,20 +72,18 @@ class ReservationHistoryView(View):
         super().__init__(history, caller)
         self.initiate_options()
         self.room_controller = RoomController()
-        self.userID=userID
-        self.startDate=startDate
-        self.duration=duration
-        self.roomType=RoomType()
-        self.bill=Bill()
-        self.reservation_controller=ReservationController()
-        self.bill_controller=BillController()
+        self.userID = userID
+        self.startDate = startDate
+        self.duration = duration
+        self.roomType = RoomType()
+        self.reservation_controller = ReservationController()
+        self.bill_controller = BillController()
 
     def show(self):
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
         callable = [operation_obj[1]
                     for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
 
-        
         getattr(self, callable)()
 
     def listStay(self):
@@ -98,10 +94,9 @@ class ReservationHistoryView(View):
 
         else:
             for reservation in reservations:
-                print("stay with reservation id:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with room id:"+
-                    str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+"\n")
+                print("stay with reservation id:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with room id:" +
+                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+"\n")
 
-            
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
         self.show()
 
@@ -113,10 +108,9 @@ class ReservationHistoryView(View):
 
         else:
             for reservation in reservations:
-                print("reservation:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with status: "+reservation.status+", with room id:"+
-                    str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+"\n")
+                print("reservation:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with status: "+reservation.status+", with room id:" +
+                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+"\n")
 
-            
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
         self.show()
 
@@ -131,7 +125,7 @@ class ReservationHistoryView(View):
                 'name': operation_option[0]
             }
             choices.append(choice)
-        PROMPTS[PROMPT_KEY["BACK"]][0]['choices']=[]
+        PROMPTS[PROMPT_KEY["BACK"]][0]['choices'] = []
         PROMPTS[PROMPT_KEY["BACK"]][0]['choices'].append(
             {
                 "name": "Back"
