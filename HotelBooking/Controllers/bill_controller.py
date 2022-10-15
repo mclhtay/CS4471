@@ -2,6 +2,7 @@ from HotelBooking.Controllers.controller import Controller
 from HotelBooking.Models.bill import Bill
 from typing import List
 
+
 class BillController(Controller):
     bill: Bill
 
@@ -14,6 +15,9 @@ class BillController(Controller):
 
     def modify(self, bill_id: int, amount: float) -> int:
         return self.bill.modifyBill(bill_id, amount)
+
+    def get_bill(self, bill_id: int) -> Bill:
+        return self.bill.get_bill(bill_id)
 
     def pay_bill(self, bill_id: int):
         self.bill.pay_bill(bill_id)

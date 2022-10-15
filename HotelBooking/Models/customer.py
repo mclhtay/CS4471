@@ -2,6 +2,7 @@ from sqlmodel import Field, SQLModel, Session, select
 from typing import Optional
 from HotelBooking.Models.utils import get_engine
 
+
 class Customer(SQLModel, table=True):
     customer_id: str = Field(primary_key=True)
     customer_password: str

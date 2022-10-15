@@ -3,7 +3,6 @@ from HotelBooking.Views.pay_bill_view import PayBillView
 from HotelBooking.Views.reserved_history_view import ReservationHistoryView
 from HotelBooking.Views.utils import big_print, medium_print
 from HotelBooking.Views.view import View
-from HotelBooking.Views.checked_in_rooms_view import CheckedInRoomsView
 from HotelBooking.Views.reserved_rooms_view import ReservedRoomsView
 from typing import Tuple, List
 from PyInquirer import prompt
@@ -24,13 +23,13 @@ PROMPTS = {
 
 
 class CustomerView(View):
-    userID:str
+    userID: str
     view_options: List[Tuple[str, View]] = [
         ("Book/Cancel reservation", ReservedRoomsView),
         ("Modify reservation", ModifyReservationView),
         ("Check/Pay Bill", PayBillView),
         ("Check reservation/stay history", ReservationHistoryView)
-        
+
     ]
     operation_options: List[Tuple[str, str]] = [
         ("Quit", 'quit_system'),
@@ -38,9 +37,8 @@ class CustomerView(View):
 
     def __init__(self, history=[], caller=None, userID=None) -> None:
         super().__init__(history, caller)
-        self.userID=userID
+        self.userID = userID
         self.initiate_options()
-        
 
     def show(self):
         big_print("Customer PORTAL")

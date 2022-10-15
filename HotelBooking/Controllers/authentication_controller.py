@@ -6,6 +6,7 @@ from HotelBooking.Models.customer import Customer
 class AuthenticationController(Controller):
     administrator: Administrator
     customer: Customer
+
     def __init__(self):
         super().__init__()
         self.administrator = Administrator()

@@ -45,7 +45,7 @@ class RoomController(Controller):
 
     def get_room(self, id) -> Room:
         return self.room.get_room_by_id(id)
-        
+
     def get_reserved_room(self, customer_id: int) -> Room:
         return self.room.get_reserved_room(customer_id)
 
@@ -62,4 +62,3 @@ class RoomController(Controller):
             stay_duration.total_seconds() / 3600.0 * ROOM_PRICING[checked_in_room.room_type], 2)
         self.bill_controller.create_bill(checked_in_room.customer_id, cost)
         self.room.check_out_room(room_id)
-
