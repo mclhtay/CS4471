@@ -25,12 +25,12 @@ class RoomController(Controller):
     room: Room
     roomType: RoomType
     reservation: Reservation
-    bill_controller: BillController
+    bill: Bill
 
     def __init__(self) -> None:
         super().__init__()
         self.room = Room()
-        self.bill_controller = BillController()
+        self.bill = Bill()
         self.roomType = RoomType()
         self.reservation = Reservation()
 
@@ -49,16 +49,12 @@ class RoomController(Controller):
     def get_reserved_room(self, customer_id: int) -> Room:
         return self.room.get_reserved_room(customer_id)
 
-    def check_in_room(self, room_id: str, customer_id: int):
-        self.room.check_in_room(room_id, customer_id,
-                                datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    def check_in_room(self, room_id: str, customer_id: int, reservation_id: int):
+        self.room.check_in_room(room_id, customer_id)
+        self.reservation.update_reservation_status(
+            reservation_id, "IN_PROGRESS")
 
     def check_out_room(self, room_id: str):
-        check_out_time = datetime.now()
-        checked_in_room = self.room.get_room_by_id(room_id)
-        stay_duration = check_out_time - \
-            parser.parse(checked_in_room.status_time)
-        cost = round(
-            stay_duration.total_seconds() / 3600.0 * ROOM_PRICING[checked_in_room.room_type], 2)
-        self.bill_controller.create_bill(checked_in_room.customer_id, cost)
         self.room.check_out_room(room_id)
+        self.reservation.close_reservation_with_room_id(
+            room_id)

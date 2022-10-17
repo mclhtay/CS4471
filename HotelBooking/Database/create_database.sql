@@ -39,7 +39,7 @@ CREATE TABLE bill
 CREATE TABLE reservation
 (
   reservation_id INTEGER PRIMARY KEY,
-  status TEXT CHECK(status IN ('OPEN', 'CLOSED', 'CANCELED')) NOT NULL DEFAULT "OPEN",
+  status TEXT CHECK(status IN ('OPEN', 'CLOSED', 'CANCELED', 'IN_PROGRESS')) NOT NULL DEFAULT "OPEN",
   customer_id VARCHAR(10),
   room_id VARCHAR(20),
   bill_id INTEGER,
