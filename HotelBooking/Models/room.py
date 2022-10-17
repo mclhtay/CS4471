@@ -76,9 +76,9 @@ class Room(SQLModel, table=True):
         session.close()
         return room
 
-    def check_in_room(self, room_id: str, customer_id: int, checked_in_time: str):
+    def check_in_room(self, room_id: str, customer_id: int):
         self.update_room_status(
-            room_id, ROOM_STATUS["CHECKED-IN"], customer_id, checked_in_time)
+            room_id, ROOM_STATUS["CHECKED-IN"], customer_id)
 
     def check_out_room(self, room_id: str):
         self.update_room_status(room_id, ROOM_STATUS["AVAILABLE"])

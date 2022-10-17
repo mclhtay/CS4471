@@ -7,6 +7,13 @@ from HotelBooking.Models.utils import get_engine
 from HotelBooking.Models.customer import Customer
 from typing import Optional
 
+RESERVATION_STATUS = {
+    "IN_PROGRESS": "IN_PROGRESS",
+    "CLOSED": "CLOSED",
+    "OPEN": "OPEN",
+    "CANCELED": "CANCELED"
+}
+
 
 class Reservation(SQLModel, table=True):
     reservation_id: int = Field(default=None, primary_key=True)
@@ -103,3 +110,18 @@ class Reservation(SQLModel, table=True):
         session.close()
 
         return reservation
+
+    def close_reservation_with_room_id(self, room_id):
+        engine = get_engine()
+        session = Session(engine)
+        statement = select(Reservation).where(
+            Reservation.room_id == room_id).where(Reservation.status == RESERVATION_STATUS["IN_PROGRESS"])
+
+        reservation = session.exec(statement).first()
+        session.close()
+        reservation.status = RESERVATION_STATUS["CLOSED"]
+        engine = get_engine()
+        session = Session(engine)
+        session.add(reservation)
+        session.commit()
+        session.close()
