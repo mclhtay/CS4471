@@ -43,7 +43,6 @@ class ReservationController(Controller):
         duration = int(duration)
         bill: Bill = self.bill_controller.create_bill(
             customer_id, price*duration)
-        print(status)
         if (status == "IN_PROGRESS"):
             self.reservation.create_reservation(
                 status, customer_id, room_id, bill.bill_id, start_date, duration)
@@ -71,5 +70,4 @@ class ReservationController(Controller):
             self.room.get_room_by_id(current_reservation.room_id).room_type)
         new_bill_id = self.bill_controller.modify(
             current_reservation.bill_id, price*new_duration)
-        print(new_bill_id)
         self.reservation.update_Bill(reservation_id, new_bill_id)
