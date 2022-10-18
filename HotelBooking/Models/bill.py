@@ -26,19 +26,19 @@ class Bill(SQLModel, table=True):
         session.close()
         return bill
 
-    def get_available_bill(self, userID) -> List[Bill]:
+    def get_available_bills(self, user_id) -> List[Bill]:
         engine = get_engine()
         session = Session(engine)
         statement = select(Bill).where(
-            Bill.bill_status == BILL_STATUS["OUTSTANDING"]).where(Bill.customer_id == userID)
+            Bill.bill_status == BILL_STATUS["OUTSTANDING"]).where(Bill.customer_id == user_id)
         bill = session.exec(statement).all()
         session.close()
         return bill
 
-    def get_all_bill(self, userID) -> List[Bill]:
+    def get_all_bills(self, user_id) -> List[Bill]:
         engine = get_engine()
         session = Session(engine)
-        statement = select(Bill).where(Bill.customer_id == userID)
+        statement = select(Bill).where(Bill.customer_id == user_id)
         bill = session.exec(statement).all()
         session.close()
         return bill
@@ -83,12 +83,12 @@ class Bill(SQLModel, table=True):
         session.commit()
         session.close()
 
-    def modifyBill(self, bill_id: int, billAmount: float):
+    def modify_bill(self, bill_id: int, bill_amount: float):
         bill = self.get_bill(bill_id)
         if (bill.bill_status == BILL_STATUS["PAID"]):
             self.refund_bill(bill.bill_id)
-            return self.create_bill(bill.customer_id, billAmount)
-        bill.bill_amount = billAmount
+            return self.create_bill(bill.customer_id, bill_amount).bill_id
+        bill.bill_amount = bill_amount
         engine = get_engine()
         session = Session(engine)
         session.add(bill)

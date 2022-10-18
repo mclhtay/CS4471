@@ -23,7 +23,7 @@ PROMPTS = {
 
 
 class CustomerView(View):
-    userID: str
+    user_id: str
     view_options: List[Tuple[str, View]] = [
         ("Book/Cancel reservation", ReservedRoomsView),
         ("Modify reservation", ModifyReservationView),
@@ -35,14 +35,14 @@ class CustomerView(View):
         ("Quit", 'quit_system'),
     ]
 
-    def __init__(self, history=[], caller=None, userID=None) -> None:
+    def __init__(self, history=[], caller=None, user_id=None) -> None:
         super().__init__(history, caller)
-        self.userID = userID
+        self.user_id = user_id
         self.initiate_options()
 
     def show(self):
         big_print("Customer PORTAL")
-        medium_print("Userid: "+self.userID)
+        medium_print("Userid: "+self.user_id)
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
         operations = [op[0] for op in self.operation_options]
 
@@ -53,7 +53,7 @@ class CustomerView(View):
         else:
             next = [view_obj[1]
                     for view_obj in self.view_options if view_obj[0] == operation].pop()
-            next(self.history, self, self.userID).show()
+            next(self.history, self, self.user_id).show()
 
     def initiate_options(self):
         choices = []

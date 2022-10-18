@@ -8,7 +8,7 @@ class RoomType(SQLModel, table=True):
     room_type: Optional[str] = Field(default=None, primary_key=True)
     room_price: float
 
-    def get_Price(self, type: str) -> float:
+    def get_price(self, type: str) -> float:
         engine = get_engine()
         session = Session(engine)
         statement = select(RoomType).where(RoomType.room_type == type)

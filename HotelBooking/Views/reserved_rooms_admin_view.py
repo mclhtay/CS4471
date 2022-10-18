@@ -12,7 +12,8 @@ PROMPT_KEY = {
     "START_DATE": "start_date",
     "DURATION": "duration",
     "BACK": "back",
-    "FINAL_CHECK": "final_check"
+    "FINAL_CHECK": "final_check",
+    "CUSTOMER": "customer"
 }
 
 PROMPTS = {
@@ -70,7 +71,7 @@ PROMPTS = {
 }
 
 
-class ReservedRoomsView(View):
+class ReservedRoomsAdminView(View):
     reservation_controller: ReservationController
     room_controller: RoomController
     bill_controller: BillController
@@ -79,6 +80,7 @@ class ReservedRoomsView(View):
     duration: int
     operation_options: List[Tuple[str, str]] = [
         ("Reserve a room", 'reserve_room'),
+        ("Reserve a room and check in", 'reserve_room_and_check_in'),
         ("Cancel a reservation", 'cancel_reservation'),
         ("Back", 'prev_view'),
     ]
@@ -94,10 +96,68 @@ class ReservedRoomsView(View):
         self.reservation_controller = ReservationController()
 
     def show(self):
+        if self.user_id == None:
+            self.user_id = self.prompt_and_get_answer(PROMPT_KEY['CUSTOMER'])
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
         callable = [operation_obj[1]
                     for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
         getattr(self, callable)()
+
+    def reserve_room_and_check_in(self):
+        available_rooms = self.room_controller.get_available_rooms()
+        singles = [
+            room for room in available_rooms if room.room_type == ROOM_TYPE["SINGLE"]]
+        doubles = [
+            room for room in available_rooms if room.room_type == ROOM_TYPE["DOUBLE"]]
+        deluxes = [
+            room for room in available_rooms if room.room_type == ROOM_TYPE["DELUXE"]]
+        presidentials = [
+            room for room in available_rooms if room.room_type == ROOM_TYPE["PRESIDENTIAL"]]
+
+        PROMPTS[PROMPT_KEY["RESERVE"]][0]['choices'] = [
+            {
+                "name": f'Single ({len(singles)} available)',
+                'disabled': "Not available" if len(singles) == 0 else False
+            },
+            {
+                "name": f'Double ({len(doubles)} available)',
+                'disabled': "Not available" if len(doubles) == 0 else False
+            },
+            {
+                "name": f'Deluxe ({len(deluxes)} available)',
+                'disabled': "Not available" if len(deluxes) == 0 else False
+            },
+            {
+                "name": f'Presidential ({len(presidentials)} available)',
+                'disabled': "Not available" if len(presidentials) == 0 else False
+            },
+            {
+                "name": "Back"
+            }
+        ]
+
+        room_choice = self.prompt_and_get_answer(PROMPT_KEY['RESERVE'])
+        if room_choice != "BACK":
+            room_id = [
+                room.room_id for room in available_rooms if room.room_type == room_choice].pop()
+            if self.user_id == None:
+                self.user_id = self.prompt_and_get_answer(
+                    PROMPT_KEY['CUSTOMER'])
+            self.start_date = self.prompt_and_get_answer(
+                PROMPT_KEY['START_DATE'])
+            self.duration = int(
+                self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
+
+            current_room_type = self.room_controller.get_room(
+                room_id).room_type
+            PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['message'] = "The total is " + \
+                str(self.duration * self.room_controller.get_price(current_room_type))
+
+            if self.prompt_and_get_answer(PROMPT_KEY['FINAL_CHECK']) == "Continue":
+                self.reservation_controller.reserve_room(
+                    room_id, self.user_id, self.start_date, self.duration, "IN_PROGRESS")
+                print("\nSuccess!\n")
+        self.show()
 
     def reserve_room(self):
         available_rooms = self.room_controller.get_available_rooms()

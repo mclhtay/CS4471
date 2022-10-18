@@ -2,14 +2,12 @@ from HotelBooking.Controllers.reservation_controller import ReservationControlle
 from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
-from HotelBooking.Models.room import ROOM_TYPE
-from HotelBooking.Models.roomType import RoomType
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
-    "LIST_RESERVATION": "listReservation",
-    "LIST_STAY": "listStay",
+    "LIST_RESERVATION": "list_reservation",
+    "LIST_STAY": "list_stay",
     "BACK": "back",
-    "FINAL_CHECK": "finalCheck"
+    "FINAL_CHECK": "final_check"
 }
 
 PROMPTS = {
@@ -20,24 +18,24 @@ PROMPTS = {
         'choices': [
         ]
     }],
-    'listReservation': [{
+    'list_reservation': [{
         'type': 'list',
         'message': "List Reservation:",
-        'name': 'listReservation',
+        'name': 'list_reservation',
         'choices': [
         ],
     }],
-    'listStay': [{
+    'list_stay': [{
         'type': 'list',
         'message': "List Stay:",
-        'name': 'listStay',
+        'name': 'list_stay',
         'choices': [
         ],
     }],
-    "finalCheck": [{
+    "final_check": [{
         'type': 'list',
         'message': "The total is ",
-        'name': 'finalCheck',
+        'name': 'final_check',
         'choices': [
         ],
     }],
@@ -53,23 +51,21 @@ PROMPTS = {
 
 class ReservationHistoryView(View):
     reservation_controller: ReservationController
-    userID: str
-    startDate: str
+    user_id: str
+    start_date: str
     duration: int
-    roomType: RoomType
     operation_options: List[Tuple[str, str]] = [
-        ("List all reservation", 'listReservation'),
-        ("List stay", 'listStay'),
+        ("List all reservation", 'list_reservation'),
+        ("List stay", 'list_stay'),
         ("Back", 'prev_view'),
     ]
 
-    def __init__(self, history=[], caller=None, userID=None, startDate=None, duration=None) -> None:
+    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None) -> None:
         super().__init__(history, caller)
         self.initiate_options()
-        self.userID = userID
-        self.startDate = startDate
+        self.user_id = user_id
+        self.start_date = start_date
         self.duration = duration
-        self.roomType = RoomType()
         self.reservation_controller = ReservationController()
 
     def show(self):
@@ -79,8 +75,9 @@ class ReservationHistoryView(View):
 
         getattr(self, callable)()
 
-    def listStay(self):
-        reservations = self.reservation_controller.get_stay(self.userID)
+    def list_stay(self):
+        reservations = self.reservation_controller.get_stay_history(
+            self.user_id)
         if len(reservations) == 0:
             print("\nThere are no stay history\n")
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
@@ -93,8 +90,9 @@ class ReservationHistoryView(View):
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
         self.show()
 
-    def listReservation(self):
-        reservations = self.reservation_controller.get_reservation(self.userID)
+    def list_reservation(self):
+        reservations = self.reservation_controller.get_reservations(
+            self.user_id)
         if len(reservations) == 0:
             print("\nThere are no reservation\n")
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])

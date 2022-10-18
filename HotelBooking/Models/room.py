@@ -23,15 +23,12 @@ class Room(SQLModel, table=True):
     room_id: Optional[str] = Field(primary_key=True)
     room_type: str
     room_status: str = Field(default="AVAILABLE")
-    customer_id: Optional[str] = Field(foreign_key=Customer.customer_id)
 
-    def get_room_with_status(self, room_status: ROOM_STATUS, userID=None) -> List[Room]:
+    def get_room_with_status(self, room_status: ROOM_STATUS) -> List[Room]:
         engine = get_engine()
         session = Session(engine)
         statement = select(Room).where(
             Room.room_status == room_status)
-        if userID != None:
-            statement = statement.where(Room.customer_id == userID)
 
         rooms = session.exec(statement).all()
         session.close()
@@ -47,10 +44,9 @@ class Room(SQLModel, table=True):
         session.close()
         return room
 
-    def update_room_status(self, room_id: str, room_status: ROOM_STATUS, customer_id=None):
+    def update_room_status(self, room_id: str, room_status: ROOM_STATUS):
         room = self.get_room_by_id(room_id)
         room.room_status = room_status
-        room.customer_id = customer_id
 
         engine = get_engine()
         session = Session(engine)
@@ -61,24 +57,15 @@ class Room(SQLModel, table=True):
     def get_checked_in_rooms(self) -> List[Room]:
         return self.get_room_with_status(ROOM_STATUS["CHECKED-IN"])
 
-    def get_reserved_rooms(self, userID=None) -> List[Room]:
-        return self.get_room_with_status(ROOM_STATUS["RESERVED"], userID)
+    def get_reserved_rooms(self) -> List[Room]:
+        return self.get_room_with_status(ROOM_STATUS["RESERVED"])
 
     def get_available_rooms(self) -> List[Room]:
         return self.get_room_with_status(ROOM_STATUS["AVAILABLE"])
 
-    def get_reserved_room(self, customer_id: int) -> Room:
-        engine = get_engine()
-        session = Session(engine)
-        statement = select(Room).where(
-            Room.customer_id == customer_id).where(Room.room_status == ROOM_STATUS["RESERVED"])
-        room = session.exec(statement).first()
-        session.close()
-        return room
-
-    def check_in_room(self, room_id: str, customer_id: int):
+    def check_in_room(self, room_id: str):
         self.update_room_status(
-            room_id, ROOM_STATUS["CHECKED-IN"], customer_id)
+            room_id, ROOM_STATUS["CHECKED-IN"])
 
     def check_out_room(self, room_id: str):
         self.update_room_status(room_id, ROOM_STATUS["AVAILABLE"])

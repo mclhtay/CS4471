@@ -1,6 +1,6 @@
 from __future__ import annotations
 from HotelBooking.Controllers.bill_controller import BillController
-from HotelBooking.Views.reserved_rooms_view import ReservedRoomsView
+from HotelBooking.Views.reserved_rooms_admin_view import ReservedRoomsAdminView
 from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
@@ -10,38 +10,24 @@ from HotelBooking.Models.room import ROOM_TYPE, Room
 
 PROMPT_KEY = {
     "OPERATIONS": "operations",
-    "CHECK-IN": 'check-in',
-    "ROOM-CHECK-IN": 'room-check-in',
-    "CHECK-OUT": 'check-out',
+    "CHECK_OUT": 'check_out',
     "CUSTOMER": "customer",
     "BACK": "back",
-    "LIST_RESERVATION": "listOutReservation"
+    "LIST_RESERVATION": "list_out_reservation"
 }
 
 PROMPTS = {
     "operations": [{
         'type': 'list',
-        'message': "Check-in/out for a guest",
+        'message': "Check_in/out for a guest",
         'name': 'operations',
         'choices': [
         ]
     }],
-    "check-in": [{
-        'type': 'confirm',
-        'message': 'Did the customer make a reservation?',
-        'name': 'check-in',
-    }],
-    "room-check-in": [{
-        'type': 'list',
-        'message': 'What type of room?',
-        'name': 'room-check-in',
-        'choices': [],
-        'filter': lambda choice: choice.split(" ")[0].upper(),
-    }],
-    "check-out": [{
+    "check_out": [{
         'type': 'list',
         'message': 'Which one to check-out?',
-        'name': 'check-out',
+        'name': 'check_out',
         'choices': [],
     }],
     "customer": [{
@@ -56,10 +42,10 @@ PROMPTS = {
         'choices': [
         ]
     }],
-    'listOutReservation': [{
+    'list_out_reservation': [{
         'type': 'list',
         'message': "Which reservation do you want to change",
-        'name': 'listOutReservation',
+        'name': 'list_out_reservation',
         'choices': [
         ]
     }],
@@ -70,7 +56,6 @@ class CheckedInRoomsView(View):
     operation_options: List[Tuple[str, str]] = [
         ("Check-in a customer", 'check_in_customer'),
         ("Check-out a customer", 'check_out_customer'),
-        ("create/cancel reservation for a customer", 'modify_reservation'),
         ("Back", 'prev_view'),
     ]
     room_controller: RoomController
@@ -92,8 +77,7 @@ class CheckedInRoomsView(View):
 
     def check_in_customer(self):
         customer_id = self.prompt_and_get_answer(PROMPT_KEY['CUSTOMER'])
-        print(customer_id)
-        reservations = self.reservation_controller.get_open_reservation(
+        reservations = self.reservation_controller.get_open_reservations(
             customer_id)
         if len(reservations) == 0:
             print("\nThere are no reservation\n")
@@ -115,16 +99,16 @@ class CheckedInRoomsView(View):
             answer: str = self.prompt_and_get_answer(
                 PROMPT_KEY['LIST_RESERVATION'])
             if answer != "Back":
-                answerList: List[str] = answer.replace(':', ',').split(',')
-                roomID = answerList[0].strip()
-                reservationID = answerList[2].strip()
+                answer_list: List[str] = answer.replace(':', ',').split(',')
+                roomID = answer_list[0].strip()
+                reservation_id = answer_list[2].strip()
                 room: Room = self.room_controller.get_room(
                     roomID)
                 if room is None:
                     print("This customer does not have a reservation!")
                 else:
                     self.room_controller.check_in_room(
-                        room.room_id, customer_id, reservationID)
+                        room.room_id, reservation_id)
 
                     print("\nSuccess!\n")
         self.show()
@@ -134,26 +118,22 @@ class CheckedInRoomsView(View):
         if len(checked_in_rooms) == 0:
             print("\nThere are no checked in rooms\n")
         else:
-            PROMPTS[PROMPT_KEY["CHECK-OUT"]][0]['choices'] = [
+            PROMPTS[PROMPT_KEY["CHECK_OUT"]][0]['choices'] = [
                 {
                     "name": room.room_id
                 }
                 for room in checked_in_rooms
             ]
-            PROMPTS[PROMPT_KEY["CHECK-OUT"]][0]['choices'].append(
+            PROMPTS[PROMPT_KEY["CHECK_OUT"]][0]['choices'].append(
                 {
                     "name": "Back"
                 }
             )
-            room_id = self.prompt_and_get_answer(PROMPT_KEY['CHECK-OUT'])
+            room_id = self.prompt_and_get_answer(PROMPT_KEY['CHECK_OUT'])
             if room_id != "Back":
                 self.room_controller.check_out_room(room_id)
                 print("\nSuccess!\n")
         self.show()
-
-    def modify_reservation(self):
-        customer_id = self.prompt_and_get_answer(PROMPT_KEY['CUSTOMER'])
-        ReservedRoomsView(self.history, self, customer_id).show()
 
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])
@@ -167,6 +147,7 @@ class CheckedInRoomsView(View):
             }
             choices.append(choice)
         PROMPTS[PROMPT_KEY['OPERATIONS']][0]['choices'] = choices
+        PROMPTS[PROMPT_KEY["BACK"]][0]['choices'] = []
         PROMPTS[PROMPT_KEY["BACK"]][0]['choices'].append(
             {
                 "name": "Back"
