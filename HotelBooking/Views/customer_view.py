@@ -1,7 +1,8 @@
-from HotelBooking.Views.reserved_rooms_admin_view import ReservedRoomsAdminView
-from HotelBooking.Views.utils import big_print
+from HotelBooking.Views.modify_reservation_view import ModifyReservationView
+from HotelBooking.Views.pay_bill_view import PayBillView
+from HotelBooking.Views.reserved_history_view import ReservationHistoryView
+from HotelBooking.Views.utils import big_print, medium_print
 from HotelBooking.Views.view import View
-from HotelBooking.Views.checked_in_rooms_view import CheckedInRoomsView
 from HotelBooking.Views.reserved_rooms_view import ReservedRoomsView
 from typing import Tuple, List
 from PyInquirer import prompt
@@ -13,7 +14,7 @@ PROMPT_KEY = {
 PROMPTS = {
     "operations": [{
         'type': 'list',
-        'message': "Admin operations",
+        'message': "Customer operations",
         'name': 'operations',
         'choices': [
         ]
@@ -21,22 +22,27 @@ PROMPTS = {
 }
 
 
-class AdminView(View):
+class CustomerView(View):
+    user_id: str
     view_options: List[Tuple[str, View]] = [
-        ("Check-in/out for a guest", CheckedInRoomsView),
-        ("Book/Cancel reservation for a guest", ReservedRoomsAdminView)
+        ("Book/Cancel reservation", ReservedRoomsView),
+        ("Modify reservation", ModifyReservationView),
+        ("Check/Pay Bill", PayBillView),
+        ("Check reservation/stay history", ReservationHistoryView)
+
     ]
     operation_options: List[Tuple[str, str]] = [
         ("Quit", 'quit_system'),
     ]
 
-    def __init__(self, history=[], caller=None) -> None:
+    def __init__(self, history=[], caller=None, user_id=None) -> None:
         super().__init__(history, caller)
+        self.user_id = user_id
         self.initiate_options()
 
     def show(self):
-        big_print("ADMIN PORTAL")
-
+        big_print("Customer PORTAL")
+        medium_print("Userid: "+self.user_id)
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
         operations = [op[0] for op in self.operation_options]
 
@@ -47,7 +53,7 @@ class AdminView(View):
         else:
             next = [view_obj[1]
                     for view_obj in self.view_options if view_obj[0] == operation].pop()
-            self.next_view(next)
+            next(self.history, self, self.user_id).show()
 
     def initiate_options(self):
         choices = []

@@ -1,4 +1,5 @@
-from HotelBooking.Views.utils import error_print
+from HotelBooking.Views.customer_view import CustomerView
+from HotelBooking.Views.utils import big_print, error_print
 from HotelBooking.Views.view import View
 from HotelBooking.Views.admin_view import AdminView
 from HotelBooking.Controllers.authentication_controller import AuthenticationController
@@ -34,7 +35,7 @@ PROMPTS = {
 
 class AuthenticationView(View):
     view_options: List[Tuple[str, View]] = [
-        ("Customer", View),
+        ("Customer", CustomerView),
         ("Hotel associate", AdminView)
     ]
     authentication_controller: AuthenticationController
@@ -62,14 +63,17 @@ class AuthenticationView(View):
                 authenticated = self.authentication_controller.authenticate_admin(
                     self.user_id, self.user_password)
             else:
-                pass
+                authenticated = self.authentication_controller.authenticate_customer(
+                    self.user_id, self.user_password)
 
             self.authenticated = authenticated
             if not authenticated:
                 error_print("Authentication Failed!\t")
 
-        next = AdminView if authenticator == "Hotel associate" else None
-        self.next_view(next)
+        if authenticator == "Hotel associate":
+            AdminView(self.history, self).show()
+        else:
+            CustomerView(self.history, self, self.user_id).show()
 
     def initiate_options(self):
         for view_option in self.view_options:
