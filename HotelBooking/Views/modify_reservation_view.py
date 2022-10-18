@@ -4,14 +4,13 @@ from HotelBooking.Controllers.bill_controller import BillController
 from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
-from HotelBooking.Models.roomType import RoomType
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
-    "CHANGE_START_DATE": 'changeStartDate',
+    "CHANGE_START_DATE": 'change_start_date',
     "CHANGE_DURATION": 'duration',
     "BACK": "back",
-    "FINAL_CHECK": "finalCheck",
-    "LIST_RESERVATION": "listOutReservation"
+    "FINAL_CHECK": "final_check",
+    "LIST_RESERVATION": "list_out_reservation"
 }
 
 PROMPTS = {
@@ -22,27 +21,27 @@ PROMPTS = {
         'choices': [
         ]
     }],
-    'changeStartDate': [{
+    'change_start_date': [{
         'type': 'input',
         'message': "Enter a new start date",
-        'name': 'changeStartDate'
+        'name': 'change_start_date'
     }],
     'duration': [{
         'type': 'input',
         'message': "Enter a new duration",
         'name': 'duration'
     }],
-    'listOutReservation': [{
+    'list_out_reservation': [{
         'type': 'list',
         'message': "Which reservation do you want to change",
-        'name': 'listOutReservation',
+        'name': 'list_out_reservation',
         'choices': [
         ]
     }],
-    "finalCheck": [{
+    "final_check": [{
         'type': 'list',
         'message': "The total is ",
-        'name': 'finalCheck',
+        'name': 'final_check',
         'choices': [
         ]
     }],
@@ -59,22 +58,20 @@ PROMPTS = {
 class ModifyReservationView(View):
     reservation_controller: ReservationController
     room_controller: RoomController
-    userID: str
+    user_id: str
     bill_controller: BillController
-    roomType: RoomType
-    reservationID: int
+    reservation_id: int
     operation_options: List[Tuple[str, str]] = [
-        ("Change the start date", 'changeStartDate'),
-        ("Change the duration", 'changeDuration'),
+        ("Change the start date", 'change_start_date'),
+        ("Change the duration", 'change_duration'),
         ("Back", 'prev_view'),
     ]
 
-    def __init__(self, history=[], caller=None, userID=None, startDate=None, duration=None) -> None:
+    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None) -> None:
         super().__init__(history, caller)
         self.initiate_options()
         self.room_controller = RoomController()
-        self.userID = userID
-        self.roomType = RoomType()
+        self.user_id = user_id
         self.bill_controller = BillController()
         self.reservation_controller = ReservationController()
 
@@ -85,9 +82,9 @@ class ModifyReservationView(View):
 
         getattr(self, callable)()
 
-    def changeStartDate(self):
-        reservations = self.reservation_controller.get_open_reservation(
-            self.userID)
+    def change_start_date(self):
+        reservations = self.reservation_controller.get_open_reservations(
+            self.user_id)
         if len(reservations) == 0:
             print("\nThere are no reservation\n")
             PROMPTS[PROMPT_KEY["BACK"]][0]['choices'].append(
@@ -112,18 +109,18 @@ class ModifyReservationView(View):
             answer: str = self.prompt_and_get_answer(
                 PROMPT_KEY['LIST_RESERVATION'])
             if answer != "Back":
-                answerList: List[str] = answer.replace(':', ',').split(',')
+                answer_list: List[str] = answer.replace(':', ',').split(',')
                 newDate = self.prompt_and_get_answer(
                     PROMPT_KEY['CHANGE_START_DATE'])
-                reservationID = answerList[2].strip()
+                reservation_id = answer_list[2].strip()
                 self.reservation_controller.modify_reservation_date(
-                    reservationID, newDate)
+                    reservation_id, newDate)
                 print("\nSuccess!\n")
         self.show()
 
-    def changeDuration(self):
-        reservations = self.reservation_controller.get_open_reservation(
-            self.userID)
+    def change_duration(self):
+        reservations = self.reservation_controller.get_open_reservations(
+            self.user_id)
         if len(reservations) == 0:
             print("\nThere are no reservation\n")
             PROMPTS[PROMPT_KEY["BACK"]][0]['choices'].append(
@@ -149,21 +146,22 @@ class ModifyReservationView(View):
             answer: str = self.prompt_and_get_answer(
                 PROMPT_KEY['LIST_RESERVATION'])
             if answer != "Back":
-                answerList: List[str] = answer.replace(':', ',').split(',')
+                answer_list: List[str] = answer.replace(':', ',').split(',')
                 duration = int(self.prompt_and_get_answer(
                     PROMPT_KEY['CHANGE_DURATION']))
 
-                reservationID = answerList[2].strip()
-                roomID = answerList[0].strip()
+                reservation_id = answer_list[2].strip()
+                room_id = answer_list[0].strip()
                 current_room_type = self.room_controller.get_room(
-                    roomID).room_type
-                i: int = duration * self.roomType.get_Price(current_room_type)
+                    room_id).room_type
+                i: int = duration * \
+                    self.room_controller.get_price(current_room_type)
                 PROMPTS[PROMPT_KEY["FINAL_CHECK"]
                         ][0]['message'] = "The total is "+str(i)
 
                 if self.prompt_and_get_answer(PROMPT_KEY['FINAL_CHECK']) == "Continue":
                     self.reservation_controller.modify_reservation_duration(
-                        reservationID, duration)
+                        reservation_id, duration)
                     print("\nSuccess!\n")
         self.show()
 

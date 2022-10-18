@@ -3,13 +3,12 @@ from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
 from HotelBooking.Models.room import ROOM_TYPE
-from HotelBooking.Models.roomType import RoomType
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
-    "PAY_BILL": 'payBill',
-    "LIST_BILL": "listBill",
+    "PAY_BILL": 'pay_bill',
+    "LIST_BILL": "list_bill",
     "BACK": "back",
-    "FINAL_CHECK": "finalCheck"
+    "FINAL_CHECK": "final_check"
 }
 
 PROMPTS = {
@@ -20,25 +19,25 @@ PROMPTS = {
         'choices': [
         ]
     }],
-    'payBill': [{
+    'pay_bill': [{
         'type': 'list',
         'message': "Which bill do you want to pay?",
-        'name': 'payBill',
+        'name': 'pay_bill',
         'choices': [
         ],
     }],
-    'listBill': [{
+    'list_bill': [{
         'type': 'list',
         'message': "List Bill:",
-        'name': 'listBill',
+        'name': 'list_bill',
         'choices': [
         ],
     }],
 
-    "finalCheck": [{
+    "final_check": [{
         'type': 'list',
         'message': "The total is ",
-        'name': 'finalCheck',
+        'name': 'final_check',
         'choices': [
         ],
     }],
@@ -54,23 +53,21 @@ PROMPTS = {
 
 class PayBillView(View):
     bill_controller: BillController
-    userID: str
-    startDate: str
+    user_id: str
+    start_date: str
     duration: int
-    roomType: RoomType
     operation_options: List[Tuple[str, str]] = [
-        ("Pay a bill", 'payBill'),
-        ("List out all the bills", 'listBill'),
+        ("Pay a bill", 'pay_bill'),
+        ("List out all the bills", 'list_bill'),
         ("Back", 'prev_view'),
     ]
 
-    def __init__(self, history=[], caller=None, userID=None, startDate=None, duration=None) -> None:
+    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None) -> None:
         super().__init__(history, caller)
         self.initiate_options()
-        self.userID = userID
-        self.startDate = startDate
+        self.user_id = user_id
+        self.start_date = start_date
         self.duration = duration
-        self.roomType = RoomType()
         self.bill_controller = BillController()
 
     def show(self):
@@ -80,8 +77,8 @@ class PayBillView(View):
 
         getattr(self, callable)()
 
-    def payBill(self):
-        available_bill = self.bill_controller.get_available_bill(self.userID)
+    def pay_bill(self):
+        available_bill = self.bill_controller.get_available_bills(self.user_id)
         if len(available_bill) == 0:
             print("\nThere are no bill\n")
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
@@ -100,14 +97,14 @@ class PayBillView(View):
             )
             answer: str = self.prompt_and_get_answer(PROMPT_KEY['PAY_BILL'])
             if answer != "Back":
-                answerList: List[str] = answer.replace(':', ',').split(',')
-                billID = answerList[1].strip()
-                self.bill_controller.pay_bill(billID)
+                answer_list: List[str] = answer.replace(':', ',').split(',')
+                bill_id = answer_list[1].strip()
+                self.bill_controller.pay_bill(bill_id)
                 print("\nSuccess!\n")
         self.show()
 
-    def listBill(self):
-        all_bill = self.bill_controller.get_all_bill(self.userID)
+    def list_bill(self):
+        all_bill = self.bill_controller.get_all_bills(self.user_id)
         if len(all_bill) == 0:
             print("\nThere are no bill\n")
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])

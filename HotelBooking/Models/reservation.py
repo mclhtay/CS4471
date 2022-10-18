@@ -24,23 +24,23 @@ class Reservation(SQLModel, table=True):
     reservation_checkin_date: str
     reservation_stay_date: int
 
-    def get_reservation_with_status(self, status, userID=None) -> List[Reservation]:
+    def get_reservations_with_status(self, status, user_id=None) -> List[Reservation]:
         engine = get_engine()
         session = Session(engine)
         statement = select(Reservation).where(
             Reservation.status == status)
-        if userID != None:
-            statement = statement.where(Reservation.customer_id == userID)
+        if user_id != None:
+            statement = statement.where(Reservation.customer_id == user_id)
 
         reservations = session.exec(statement).all()
         session.close()
         return reservations
 
-    def get_reservation_by_customer_id(self, userID) -> List[Reservation]:
+    def get_reservations_by_customer_id(self, user_id) -> List[Reservation]:
         engine = get_engine()
         session = Session(engine)
         statement = select(Reservation).where(
-            Reservation.customer_id == userID)
+            Reservation.customer_id == user_id)
 
         reservations = session.exec(statement).all()
         session.close()
@@ -117,7 +117,8 @@ class Reservation(SQLModel, table=True):
         statement = select(Reservation).where(
             Reservation.room_id == room_id).where(Reservation.status == RESERVATION_STATUS["IN_PROGRESS"])
 
-        reservation = session.exec(statement).first()
+        reservations = session.exec(statement)
+        reservation = reservations.first()
         session.close()
         reservation.status = RESERVATION_STATUS["CLOSED"]
         engine = get_engine()

@@ -1,3 +1,4 @@
+from HotelBooking.Views.reserved_rooms_admin_view import ReservedRoomsAdminView
 from HotelBooking.Views.utils import big_print
 from HotelBooking.Views.view import View
 from HotelBooking.Views.checked_in_rooms_view import CheckedInRoomsView
@@ -23,7 +24,7 @@ PROMPTS = {
 class AdminView(View):
     view_options: List[Tuple[str, View]] = [
         ("Check-in/out for a guest", CheckedInRoomsView),
-        ("Book/Cancel reservation for a guest", ReservedRoomsView)
+        ("Book/Cancel reservation for a guest", ReservedRoomsAdminView)
     ]
     operation_options: List[Tuple[str, str]] = [
         ("Quit", 'quit_system'),
@@ -34,7 +35,7 @@ class AdminView(View):
         self.initiate_options()
 
     def show(self):
-        big_print("ADMIN  PORTAL")
+        big_print("ADMIN PORTAL")
 
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
         operations = [op[0] for op in self.operation_options]
