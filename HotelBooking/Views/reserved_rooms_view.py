@@ -50,7 +50,7 @@ PROMPTS = {
     }],
     "duration": [{
         'type': 'input',
-        'message': "Enter the amount of date you want to reserve",
+        'message': "Enter the number of days you want to reserve",
         'name': 'duration',
     }],
     "final_check": [{
