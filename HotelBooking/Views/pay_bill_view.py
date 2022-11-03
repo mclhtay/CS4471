@@ -57,9 +57,8 @@ class PayBillView(View):
     start_date: str
     duration: int
     operation_options: List[Tuple[str, str]] = [
-        ("Pay a bill", 'pay_bill'),
-        ("List out all the bills", 'list_bill'),
-        ("Back", 'prev_view'),
+        ("Pay another bill", 'pay_bill'),
+        ("Back", 'prev_view')
     ]
 
     def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None) -> None:
@@ -71,6 +70,9 @@ class PayBillView(View):
         self.bill_controller = BillController()
 
     def show(self):
+        self.pay_bill()
+
+    def show_again(self):
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
         callable = [operation_obj[1]
                     for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
@@ -78,10 +80,14 @@ class PayBillView(View):
         getattr(self, callable)()
 
     def pay_bill(self):
+
+        self.list_bill()
+        print("\nWould you like to pay an outstanding bill?\n")
         available_bill = self.bill_controller.get_available_bills(self.user_id)
         if len(available_bill) == 0:
-            print("\nThere are no bill\n")
+            print("\nThere are no bills\n")
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
+            
 
         else:
             PROMPTS[PROMPT_KEY["PAY_BILL"]][0]['choices'] = [
@@ -101,21 +107,17 @@ class PayBillView(View):
                 bill_id = answer_list[1].strip()
                 self.bill_controller.pay_bill(bill_id)
                 print("\nSuccess!\n")
-        self.show()
+                self.show_again()
+            
+        self.prev_view()
+        
 
     def list_bill(self):
+        print("\nAll bills:\n")
         all_bill = self.bill_controller.get_all_bills(self.user_id)
-        if len(all_bill) == 0:
-            print("\nThere are no bill\n")
-            self.prompt_and_get_answer(PROMPT_KEY['BACK'])
-
-        else:
-            for bill in all_bill:
-                print("Bill:"+str(bill.bill_id)+", with amount: " +
-                      str(bill.bill_amount)+" is "+bill.bill_status+"\n")
-
-            self.prompt_and_get_answer(PROMPT_KEY['BACK'])
-        self.show()
+        for bill in all_bill:
+            print("Bill:"+str(bill.bill_id)+", with amount: " +
+                str(bill.bill_amount)+" is "+bill.bill_status+"\n")
 
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])
