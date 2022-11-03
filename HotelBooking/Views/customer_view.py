@@ -3,7 +3,8 @@ from HotelBooking.Views.pay_bill_view import PayBillView
 from HotelBooking.Views.reserved_history_view import ReservationHistoryView
 from HotelBooking.Views.utils import big_print, medium_print
 from HotelBooking.Views.view import View
-from HotelBooking.Views.reserved_rooms_view import ReservedRoomsView
+from HotelBooking.Views.book_reservation_view import BookReservationView
+from HotelBooking.Views.cancel_reservation_view import CancelReservationView
 from typing import Tuple, List
 from PyInquirer import prompt
 
@@ -25,7 +26,8 @@ PROMPTS = {
 class CustomerView(View):
     user_id: str
     view_options: List[Tuple[str, View]] = [
-        ("Book/Cancel reservation", ReservedRoomsView),
+        ("Book reservation", BookReservationView),
+        ("Cancel reservation", CancelReservationView),
         ("Modify reservation", ModifyReservationView),
         ("Check/Pay Bill", PayBillView),
         ("Check reservation/stay history", ReservationHistoryView)
