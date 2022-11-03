@@ -1,6 +1,5 @@
 from HotelBooking.Controllers.reservation_controller import ReservationController
 from HotelBooking.Controllers.room_controller import RoomController
-from HotelBooking.Controllers.bill_controller import BillController
 from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
@@ -8,7 +7,6 @@ from HotelBooking.Models.room import ROOM_TYPE
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
     "RESERVE": 'reserve',
-    "CANCEL": 'cancel',
     "START_DATE": "start_date",
     "DURATION": "duration",
     "BACK": "back",
@@ -18,7 +16,7 @@ PROMPT_KEY = {
 PROMPTS = {
     'operations': [{
         'type': 'list',
-        'message': "Reserve/Cancel a room for a guest",
+        'message': "Reserve a room",
         'name': 'operations',
         'choices': [
         ]
@@ -30,13 +28,6 @@ PROMPTS = {
         'choices': [
         ],
         'filter': lambda choice: choice.split(" ")[0].upper(),
-    }],
-    'cancel': [{
-        'type': 'list',
-        'message': "Which one to cancel?",
-        'name': 'cancel',
-        'choices': [
-        ]
     }],
     "customer": [{
         'type': 'input',
@@ -70,16 +61,14 @@ PROMPTS = {
 }
 
 
-class ReservedRoomsView(View):
+class BookReservationView(View):
     reservation_controller: ReservationController
     room_controller: RoomController
-    bill_controller: BillController
     user_id: str
     start_date: str
     duration: int
     operation_options: List[Tuple[str, str]] = [
-        ("Reserve a room", 'reserve_room'),
-        ("Cancel a reservation", 'cancel_reservation'),
+        ("Reserve another room", 'reserve_room'),
         ("Back", 'prev_view'),
     ]
 
@@ -90,10 +79,12 @@ class ReservedRoomsView(View):
         self.user_id = user_id
         self.start_date = start_date
         self.duration = duration
-        self.bill_controller = BillController()
         self.reservation_controller = ReservationController()
 
     def show(self):
+        self.reserve_room()
+
+    def show_again(self):
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
         callable = [operation_obj[1]
                     for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
@@ -153,39 +144,9 @@ class ReservedRoomsView(View):
                 self.reservation_controller.reserve_room(
                     room_id, self.user_id, self.start_date, self.duration)
                 print("\nSuccess!\n")
-        self.show()
+        self.show_again()
 
-    def cancel_reservation(self):
-        reservations = self.reservation_controller.get_open_reservations(
-            self.user_id)
-        if len(reservations) == 0:
-            print("\nThere are no reservation\n")
-            PROMPTS[PROMPT_KEY["BACK"]][0]['choices'].append(
-                {
-                    "name": "Back"
-                }
-            )
-            self.prompt_and_get_answer(PROMPT_KEY['BACK'])
-
-        else:
-            PROMPTS[PROMPT_KEY["CANCEL"]][0]['choices'] = [
-                {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
-                }
-                for reservation in reservations
-            ]
-            PROMPTS[PROMPT_KEY["CANCEL"]][0]['choices'].append(
-                {
-                    "name": "Back"
-                }
-            )
-            answer: str = self.prompt_and_get_answer(PROMPT_KEY['CANCEL'])
-            if answer != "Back":
-                answer_list: List[str] = answer.replace(':', ',').split(',')
-                self.reservation_controller.cancel_reservation(
-                    answer_list[0].strip(), answer_list[2].strip())
-                print("\nSuccess!\n")
-        self.show()
+   
 
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])
