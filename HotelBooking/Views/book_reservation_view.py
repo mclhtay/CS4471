@@ -4,6 +4,7 @@ from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
 from HotelBooking.Models.room import ROOM_TYPE
+from datetime import datetime
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
     "RESERVE": 'reserve',
@@ -36,12 +37,12 @@ PROMPTS = {
     }],
     "start_date": [{
         'type': 'input',
-        'message': "Enter the start date",
+        'message': "Enter the start date (After todays date, format: YYYYMMDD)",
         'name': 'start_date',
     }],
     "duration": [{
         'type': 'input',
-        'message': "Enter the number of days you want to reserve",
+        'message': "Enter the number of days you want to reserve (Max 365)",
         'name': 'duration',
     }],
     "final_check": [{
@@ -130,11 +131,27 @@ class BookReservationView(View):
             if self.user_id == None:
                 self.user_id = self.prompt_and_get_answer(
                     PROMPT_KEY['CUSTOMER'])
-            self.start_date = self.prompt_and_get_answer(
-                PROMPT_KEY['START_DATE'])
-            self.duration = int(
-                self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
 
+            while(True):
+                todays_date = int(datetime.now().strftime("%Y%m%d"))
+                try:
+                    self.start_date = int(self.prompt_and_get_answer(PROMPT_KEY['START_DATE']))
+                        
+                except:
+                    self.start_date = 0
+                if(self.start_date >= todays_date and self.start_date <= 99999999):
+                    break
+                print("\nPlease ensure that the date is in future and in the correct format!\n")
+
+            while(True):
+                try:
+                    self.duration = int(self.prompt_and_get_answer(PROMPT_KEY['DURATION']))    
+                except:
+                    self.duration = 0
+                if(self.duration > 0 and self.duration <= 365):
+                    break
+                print("\nPlease ensure that the duration is an integer greater than 0 (max 365) \n")
+                
             current_room_type = self.room_controller.get_room(
                 room_id).room_type
             PROMPTS[PROMPT_KEY["FINAL_CHECK"]][0]['message'] = "The total is " + \
