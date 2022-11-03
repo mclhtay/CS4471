@@ -6,7 +6,6 @@ from HotelBooking.Models.room import ROOM_TYPE
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
     "PAY_BILL": 'pay_bill',
-    "LIST_BILL": "list_bill",
     "BACK": "back",
     "FINAL_CHECK": "final_check"
 }
@@ -23,13 +22,6 @@ PROMPTS = {
         'type': 'list',
         'message': "Which bill do you want to pay?",
         'name': 'pay_bill',
-        'choices': [
-        ],
-    }],
-    'list_bill': [{
-        'type': 'list',
-        'message': "List Bill:",
-        'name': 'list_bill',
         'choices': [
         ],
     }],
@@ -81,7 +73,7 @@ class PayBillView(View):
 
     def pay_bill(self):
 
-        self.list_bill()
+        self.list_bills()
         print("\nWould you like to pay an outstanding bill?\n")
         available_bill = self.bill_controller.get_available_bills(self.user_id)
         if len(available_bill) == 0:
@@ -112,7 +104,7 @@ class PayBillView(View):
         self.prev_view()
         
 
-    def list_bill(self):
+    def list_bills(self):
         print("\nAll bills:\n")
         all_bill = self.bill_controller.get_all_bills(self.user_id)
         for bill in all_bill:
