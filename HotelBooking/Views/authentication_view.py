@@ -35,7 +35,7 @@ PROMPTS = {
 
 class AuthenticationView(View):
     view_options: List[Tuple[str, View]] = [
-        ("Customer", CustomerView),
+        ("Existing Customer", CustomerView),
         ("Hotel associate", AdminView)
     ]
     authentication_controller: AuthenticationController

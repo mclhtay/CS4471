@@ -2,7 +2,6 @@ from HotelBooking.Views.reserved_rooms_admin_view import ReservedRoomsAdminView
 from HotelBooking.Views.utils import big_print
 from HotelBooking.Views.view import View
 from HotelBooking.Views.checked_in_rooms_view import CheckedInRoomsView
-from HotelBooking.Views.reserved_rooms_view import ReservedRoomsView
 from typing import Tuple, List
 from PyInquirer import prompt
 
