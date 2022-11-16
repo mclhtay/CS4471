@@ -87,7 +87,7 @@ class ReservationHistoryView(View):
         else:
             for reservation in reservations:
                 print("stay with reservation id:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with room id:" +
-                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+(" with" if reservation.is_accessibility_requested==1 else " without")+" accessibility accomodations"+"\n")
+                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+(" with" if reservation.is_accessibility_requested==1 else " without")+" accessibility accommodations"+"\n")
 
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
         self.show()
@@ -102,7 +102,7 @@ class ReservationHistoryView(View):
         else:
             for reservation in reservations:
                 print("reservation:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with status: "+reservation.status+", with room id:" +
-                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+(", with" if reservation.is_accessibility_requested==1 else ", without")+" accessibility accomodations"+"\n")
+                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+(", with" if reservation.is_accessibility_requested==1 else ", without")+" accessibility accommodations"+"\n")
 
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
         self.show()

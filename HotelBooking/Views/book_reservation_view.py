@@ -9,7 +9,7 @@ PROMPT_KEY = {
     "RESERVE": 'reserve',
     "START_DATE": "start_date",
     "DURATION": "duration",
-    "ACCOMODATION": "accomodation",
+    "ACCOMMODATION": "accommodation",
     "BACK": "back",
     "FINAL_CHECK": "final_check"
 }
@@ -45,10 +45,10 @@ PROMPTS = {
         'message': "Enter the number of days you want to reserve",
         'name': 'duration',
     }],
-    "accomodation": [{
+    "accommodation": [{
         'type': 'input',
-        'message': "Do you require accessibility accomodations? Y/N",
-        'name': 'accomodation',
+        'message': "Do you require accessibility accommodations? Y/N",
+        'name': 'accommodation',
     }],
     "final_check": [{
         'type': 'list',
@@ -142,8 +142,8 @@ class BookReservationView(View):
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
                 self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
-            accomodation = self.prompt_and_get_answer(PROMPT_KEY['ACCOMODATION'])
-            self.is_accessibility_requested = 1 if accomodation == "Y" else 0
+            accommodation = self.prompt_and_get_answer(PROMPT_KEY['ACCOMMODATION'])
+            self.is_accessibility_requested = 1 if accommodation == "Y" else 0
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type

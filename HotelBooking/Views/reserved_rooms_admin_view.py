@@ -11,7 +11,7 @@ PROMPT_KEY = {
     "CANCEL": 'cancel',
     "START_DATE": "start_date",
     "DURATION": "duration",
-    "ACCOMODATION": "accomodation",
+    "ACCOMMODATION": "accommodation",
     "BACK": "back",
     "FINAL_CHECK": "final_check",
     "CUSTOMER": "customer"
@@ -55,10 +55,10 @@ PROMPTS = {
         'message': "Enter the number of days you want to reserve",
         'name': 'duration',
     }],
-    "accomodation": [{
+    "accommodation": [{
         'type': 'input',
-        'message': "Do they require accessibility accomodations? Y/N",
-        'name': 'accomodation',
+        'message': "Do they require accessibility accommodations? Y/N",
+        'name': 'accommodation',
     }],
     "final_check": [{
         'type': 'list',
@@ -155,8 +155,8 @@ class ReservedRoomsAdminView(View):
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
                 self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
-            accomodation = self.prompt_and_get_answer(PROMPT_KEY['ACCOMODATION'])
-            self.is_accessibility_requested = 1 if accomodation == "Y" else 0
+            accommodation = self.prompt_and_get_answer(PROMPT_KEY['ACCOMMODATION'])
+            self.is_accessibility_requested = 1 if accommodation == "Y" else 0
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type
@@ -213,8 +213,8 @@ class ReservedRoomsAdminView(View):
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
                 self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
-            accomodation = self.prompt_and_get_answer(PROMPT_KEY['ACCOMODATION'])
-            self.is_accessibility_requested = 1 if accomodation == "Y" else 0
+            accommodation = self.prompt_and_get_answer(PROMPT_KEY['ACCOMMODATION'])
+            self.is_accessibility_requested = 1 if accommodation == "Y" else 0
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type
@@ -242,7 +242,7 @@ class ReservedRoomsAdminView(View):
         else:
             PROMPTS[PROMPT_KEY["CANCEL"]][0]['choices'] = [
                 {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accomodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
+                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accommodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
                 }
                 for reservation in reservations
             ]

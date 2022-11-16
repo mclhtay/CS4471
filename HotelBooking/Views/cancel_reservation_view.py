@@ -86,7 +86,7 @@ class CancelReservationView(View):
         else:
             PROMPTS[PROMPT_KEY["CANCEL"]][0]['choices'] = [
                 {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accomodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
+                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accommodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
                 }
                 for reservation in reservations
             ]
