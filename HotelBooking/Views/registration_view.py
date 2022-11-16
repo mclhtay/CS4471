@@ -74,6 +74,11 @@ class RegistrationView(View):
 
     def create_customer(self):
         customer_id = self.prompt_and_get_answer(PROMPT_KEY['USERNAME'])
+        isDuplicateUsername = self.authentication_controller.customer_exists(customer_id)
+        while isDuplicateUsername:
+            print("Username taken, please enter a different username: ")
+            customer_id = self.prompt_and_get_answer(PROMPT_KEY['USERNAME'])
+            isDuplicateUsername = self.authentication_controller.customer_exists(customer_id)
         customer_password = self.prompt_and_get_answer(PROMPT_KEY['PASSWORD'])
         customer_name = self.prompt_and_get_answer(PROMPT_KEY['FULLNAME'])
         customer_address = self.prompt_and_get_answer(PROMPT_KEY['ADDRESS'])

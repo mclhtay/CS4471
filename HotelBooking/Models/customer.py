@@ -36,3 +36,10 @@ class Customer(SQLModel, table=True):
                 Customer.customer_id == id).where(Customer.customer_password == password)
             customer = session.exec(statement).first()
             return customer != None
+
+    def customer_exists(self, id: str) -> bool:
+        engine = get_engine()
+        with Session(engine) as session:
+            statement = select(Customer).where(Customer.customer_id == id)
+            customer = session.exec(statement).first()
+            return customer!=None
