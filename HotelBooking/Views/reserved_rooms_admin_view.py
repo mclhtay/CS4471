@@ -53,6 +53,8 @@ PROMPTS = {
         'type': 'input',
         'message': "Enter the number of days you want to reserve",
         'name': 'duration',
+        'validate': lambda x: x.isdigit() or "Please erase value and enter a valid number!"
+
     }],
     "final_check": [{
         'type': 'list',
@@ -146,7 +148,7 @@ class ReservedRoomsAdminView(View):
             self.start_date = self.prompt_and_get_answer(
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
-                self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
+                    self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type
@@ -202,7 +204,7 @@ class ReservedRoomsAdminView(View):
             self.start_date = self.prompt_and_get_answer(
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
-                self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
+                    self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type

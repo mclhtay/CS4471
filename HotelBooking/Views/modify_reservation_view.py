@@ -29,7 +29,8 @@ PROMPTS = {
     'duration': [{
         'type': 'input',
         'message': "Enter a new duration",
-        'name': 'duration'
+        'name': 'duration',
+        'validate': lambda x: x.isdigit() or "Please erase value and enter a valid number!"
     }],
     'list_out_reservation': [{
         'type': 'list',
@@ -147,8 +148,9 @@ class ModifyReservationView(View):
                 PROMPT_KEY['LIST_RESERVATION'])
             if answer != "Back":
                 answer_list: List[str] = answer.replace(':', ',').split(',')
-                duration = int(self.prompt_and_get_answer(
-                    PROMPT_KEY['CHANGE_DURATION']))
+                duration = int(
+                    self.prompt_and_get_answer(PROMPT_KEY['CHANGE_DURATION']))
+
 
                 reservation_id = answer_list[2].strip()
                 room_id = answer_list[0].strip()
