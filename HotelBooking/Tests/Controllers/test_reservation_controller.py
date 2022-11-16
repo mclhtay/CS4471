@@ -52,6 +52,7 @@ class TestRoomController:
         mock_status = "OPEN"
         mock_bill_id = 2
         mock_room_price = 20.1
+        mock_is_accessibility_requested=1
         mock_room_type = ROOM_TYPE["SINGLE"]
         mock_create_bill.return_value = Bill(
             bill_id=mock_bill_id, bill_status="CANCELED", bill_amount=1100)
@@ -60,10 +61,10 @@ class TestRoomController:
         mock_get_room_by_id.return_value = Room(
             room_id=mock_room_id, room_type=mock_room_type)
         controller.reserve_room(
-            mock_room_id, mock_customer_id, mock_start_date, mock_duration, mock_status)
+            mock_room_id, mock_customer_id, mock_start_date, mock_duration, mock_is_accessibility_requested, mock_status)
 
         mock_create_reservation.assert_called_once_with(
-            mock_status, mock_customer_id, mock_room_id, mock_bill_id, mock_start_date, mock_duration
+            mock_status, mock_customer_id, mock_room_id, mock_bill_id, mock_start_date, mock_duration, mock_is_accessibility_requested
         )
         mock_create_bill.assert_called_once_with(
             mock_customer_id, mock_duration*mock_room_price)
@@ -82,7 +83,7 @@ class TestRoomController:
         mock_room_id = "single1"
 
         res = Reservation(reservation_id=mock_reservation_id, status="OPEN", customer_id="test",
-                          room_id=mock_room_id, bill_id=mock_bill_id, reservation_checkin_date="2000/11/03", reservation_stay_date=5)
+                          room_id=mock_room_id, bill_id=mock_bill_id, reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
         mock_get_reservation_by_id.return_value = res
 
         controller = ReservationController()
@@ -130,7 +131,7 @@ class TestRoomController:
             room_id=mock_room_id, room_type=mock_room_type)
 
         res = Reservation(reservation_id=mock_reservation_id, status="OPEN", customer_id="test",
-                          room_id=mock_room_id, bill_id=mock_bill_id, reservation_checkin_date="2000/11/03", reservation_stay_date=5)
+                          room_id=mock_room_id, bill_id=mock_bill_id, reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
         mock_get_reservation_by_id.return_value = res
 
         controller.modify_reservation_duration(
