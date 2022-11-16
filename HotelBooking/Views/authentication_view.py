@@ -1,4 +1,5 @@
 from HotelBooking.Views.customer_view import CustomerView
+from HotelBooking.Views.registration_view import RegistrationView
 from HotelBooking.Views.utils import big_print, error_print
 from HotelBooking.Views.view import View
 from HotelBooking.Views.admin_view import AdminView
@@ -35,8 +36,9 @@ PROMPTS = {
 
 class AuthenticationView(View):
     view_options: List[Tuple[str, View]] = [
+        ("New Customer", RegistrationView),
         ("Existing Customer", CustomerView),
-        ("Hotel associate", AdminView)
+        ("Hotel associate", AdminView),
     ]
     authentication_controller: AuthenticationController
     user_id: str
@@ -53,6 +55,10 @@ class AuthenticationView(View):
 
     def show(self):
         authenticator = self.prompt_and_get_answer(PROMPT_KEY['AUTHENTICATOR'])
+
+        if authenticator == "New Customer":
+            RegistrationView(self.history, self).show()
+            big_print("Login PORTAL")
 
         while not self.authenticated:
             self.user_id = self.prompt_and_get_answer(PROMPT_KEY['USER_ID'])
