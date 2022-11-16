@@ -53,6 +53,7 @@ class ReservationHistoryView(View):
     reservation_controller: ReservationController
     user_id: str
     start_date: str
+    is_accessibility_requested: int
     duration: int
     operation_options: List[Tuple[str, str]] = [
         ("List all reservation", 'list_reservation'),
@@ -60,12 +61,13 @@ class ReservationHistoryView(View):
         ("Back", 'prev_view'),
     ]
 
-    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None) -> None:
+    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None, is_accessibility_requested=None) -> None:
         super().__init__(history, caller)
         self.initiate_options()
         self.user_id = user_id
         self.start_date = start_date
         self.duration = duration
+        self.is_accessibility_requested=is_accessibility_requested
         self.reservation_controller = ReservationController()
 
     def show(self):
@@ -85,7 +87,7 @@ class ReservationHistoryView(View):
         else:
             for reservation in reservations:
                 print("stay with reservation id:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with room id:" +
-                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+"\n")
+                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+(" with" if reservation.is_accessibility_requested==1 else " without")+" accessibility accomodations"+"\n")
 
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
         self.show()
@@ -100,7 +102,7 @@ class ReservationHistoryView(View):
         else:
             for reservation in reservations:
                 print("reservation:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with status: "+reservation.status+", with room id:" +
-                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+"\n")
+                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+(", with" if reservation.is_accessibility_requested==1 else ", without")+" accessibility accomodations"+"\n")
 
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
         self.show()

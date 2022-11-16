@@ -43,18 +43,20 @@ class CancelReservationView(View):
     user_id: str
     start_date: str
     duration: int
+    is_accessibility_requested: int
     operation_options: List[Tuple[str, str]] = [
         ("Cancel another reservation", 'cancel_reservation'),
         ("Back", 'prev_view'),
     ]
 
-    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None) -> None:
+    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None, is_accessibility_requested=None) -> None:
         super().__init__(history, caller)
         self.initiate_options()
         self.room_controller = RoomController()
         self.user_id = user_id
         self.start_date = start_date
         self.duration = duration
+        self.is_accessibility_requested=is_accessibility_requested
         self.bill_controller = BillController()
         self.reservation_controller = ReservationController()
 
@@ -84,7 +86,7 @@ class CancelReservationView(View):
         else:
             PROMPTS[PROMPT_KEY["CANCEL"]][0]['choices'] = [
                 {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
+                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accomodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
                 }
                 for reservation in reservations
             ]

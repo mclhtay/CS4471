@@ -43,6 +43,7 @@ CREATE TABLE reservation
   bill_id INTEGER,
   reservation_checkin_date TEXT,
   reservation_stay_date INTEGER,
+  is_accessibility_requested BIT,
   FOREIGN KEY(customer_id) REFERENCES customer(customer_id),
   FOREIGN KEY(room_id) REFERENCES room(room_id),
   FOREIGN KEY(bill_id) REFERENCES bill(bill_id)

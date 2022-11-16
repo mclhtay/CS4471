@@ -9,6 +9,7 @@ PROMPT_KEY = {
     "RESERVE": 'reserve',
     "START_DATE": "start_date",
     "DURATION": "duration",
+    "ACCOMODATION": "accomodation",
     "BACK": "back",
     "FINAL_CHECK": "final_check"
 }
@@ -44,6 +45,11 @@ PROMPTS = {
         'message': "Enter the number of days you want to reserve",
         'name': 'duration',
     }],
+    "accomodation": [{
+        'type': 'input',
+        'message': "Do you require accessibility accomodations? Y/N",
+        'name': 'accomodation',
+    }],
     "final_check": [{
         'type': 'list',
         'message': "The total is ",
@@ -67,12 +73,13 @@ class BookReservationView(View):
     user_id: str
     start_date: str
     duration: int
+    is_accessibility_requested: int
     operation_options: List[Tuple[str, str]] = [
         ("Reserve another room", 'reserve_room'),
         ("Back", 'prev_view'),
     ]
 
-    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None) -> None:
+    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None, is_accessibility_requested=None) -> None:
         super().__init__(history, caller)
         self.initiate_options()
         self.room_controller = RoomController()
@@ -80,6 +87,7 @@ class BookReservationView(View):
         self.start_date = start_date
         self.duration = duration
         self.reservation_controller = ReservationController()
+        self.is_accessibility_requested = is_accessibility_requested
 
     def show(self):
         self.reserve_room()
@@ -134,6 +142,8 @@ class BookReservationView(View):
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
                 self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
+            accomodation = self.prompt_and_get_answer(PROMPT_KEY['ACCOMODATION'])
+            self.is_accessibility_requested = 1 if accomodation == "Y" else 0
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type
@@ -142,7 +152,7 @@ class BookReservationView(View):
 
             if self.prompt_and_get_answer(PROMPT_KEY['FINAL_CHECK']) == "Continue":
                 self.reservation_controller.reserve_room(
-                    room_id, self.user_id, self.start_date, self.duration)
+                    room_id, self.user_id, self.start_date, self.duration, self.is_accessibility_requested)
                 print("\nSuccess!\n")
         self.show_again()
 

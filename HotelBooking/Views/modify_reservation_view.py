@@ -67,13 +67,14 @@ class ModifyReservationView(View):
         ("Back", 'prev_view'),
     ]
 
-    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None) -> None:
+    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None, is_accessibility_requested=None) -> None:
         super().__init__(history, caller)
         self.initiate_options()
         self.room_controller = RoomController()
         self.user_id = user_id
         self.bill_controller = BillController()
         self.reservation_controller = ReservationController()
+        self.is_accessibility_requested=is_accessibility_requested
 
     def show(self):
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
@@ -97,7 +98,7 @@ class ModifyReservationView(View):
         else:
             PROMPTS[PROMPT_KEY["LIST_RESERVATION"]][0]['choices'] = [
                 {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
+                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accomodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
                 }
                 for reservation in reservations
             ]
@@ -133,7 +134,7 @@ class ModifyReservationView(View):
         else:
             PROMPTS[PROMPT_KEY["LIST_RESERVATION"]][0]['choices'] = [
                 {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
+                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accomodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
                 }
                 for reservation in reservations
             ]

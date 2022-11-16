@@ -36,7 +36,7 @@ class ReservationController(Controller):
     def get_stay_history(self, user_id=None) -> List[Reservation]:
         return self.reservation.get_reservations_with_status("CLOSED", user_id)
 
-    def reserve_room(self, room_id: str, customer_id: int, start_date, duration: int, status: str = None):
+    def reserve_room(self, room_id: str, customer_id: int, start_date, duration: int, is_accessibility_requested: int, status: str = None):
         self.room.update_room_status(room_id, "RESERVED")
         r = self.room.get_room_by_id(room_id)
         price = float(self.room_type.get_price(r.room_type))
@@ -45,11 +45,11 @@ class ReservationController(Controller):
             customer_id, price*duration)
         if (status == "IN_PROGRESS"):
             self.reservation.create_reservation(
-                status, customer_id, room_id, bill.bill_id, start_date, duration)
+                status, customer_id, room_id, bill.bill_id, start_date, duration, is_accessibility_requested)
             self.room.check_in_room(room_id)
         else:
             self.reservation.create_reservation(
-                "OPEN", customer_id, room_id, bill.bill_id, start_date, duration)
+                "OPEN", customer_id, room_id, bill.bill_id, start_date, duration, is_accessibility_requested)
 
     def cancel_reservation(self, room_id: str, reservation_id: int):
         self.room.update_room_status(room_id, "AVAILABLE")

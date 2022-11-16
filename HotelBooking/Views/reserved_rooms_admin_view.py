@@ -11,6 +11,7 @@ PROMPT_KEY = {
     "CANCEL": 'cancel',
     "START_DATE": "start_date",
     "DURATION": "duration",
+    "ACCOMODATION": "accomodation",
     "BACK": "back",
     "FINAL_CHECK": "final_check",
     "CUSTOMER": "customer"
@@ -54,6 +55,11 @@ PROMPTS = {
         'message': "Enter the number of days you want to reserve",
         'name': 'duration',
     }],
+    "accomodation": [{
+        'type': 'input',
+        'message': "Do they require accessibility accomodations? Y/N",
+        'name': 'accomodation',
+    }],
     "final_check": [{
         'type': 'list',
         'message': "The total is ",
@@ -78,6 +84,7 @@ class ReservedRoomsAdminView(View):
     user_id: str
     start_date: str
     duration: int
+    is_accessibility_requested: int
     operation_options: List[Tuple[str, str]] = [
         ("Reserve a room", 'reserve_room'),
         ("Reserve a room and check in", 'reserve_room_and_check_in'),
@@ -85,13 +92,14 @@ class ReservedRoomsAdminView(View):
         ("Back", 'prev_view'),
     ]
 
-    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None) -> None:
+    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None, is_accessibility_requested=None) -> None:
         super().__init__(history, caller)
         self.initiate_options()
         self.room_controller = RoomController()
         self.user_id = user_id
         self.start_date = start_date
         self.duration = duration
+        self.is_accessibility_requested=is_accessibility_requested
         self.bill_controller = BillController()
         self.reservation_controller = ReservationController()
 
@@ -147,6 +155,8 @@ class ReservedRoomsAdminView(View):
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
                 self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
+            accomodation = self.prompt_and_get_answer(PROMPT_KEY['ACCOMODATION'])
+            self.is_accessibility_requested = 1 if accomodation == "Y" else 0
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type
@@ -155,7 +165,7 @@ class ReservedRoomsAdminView(View):
 
             if self.prompt_and_get_answer(PROMPT_KEY['FINAL_CHECK']) == "Continue":
                 self.reservation_controller.reserve_room(
-                    room_id, self.user_id, self.start_date, self.duration, "IN_PROGRESS")
+                    room_id, self.user_id, self.start_date, self.duration, self.is_accessibility_requested, "IN_PROGRESS")
                 print("\nSuccess!\n")
         self.show()
 
@@ -203,6 +213,8 @@ class ReservedRoomsAdminView(View):
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
                 self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
+            accomodation = self.prompt_and_get_answer(PROMPT_KEY['ACCOMODATION'])
+            self.is_accessibility_requested = 1 if accomodation == "Y" else 0
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type
@@ -211,7 +223,7 @@ class ReservedRoomsAdminView(View):
 
             if self.prompt_and_get_answer(PROMPT_KEY['FINAL_CHECK']) == "Continue":
                 self.reservation_controller.reserve_room(
-                    room_id, self.user_id, self.start_date, self.duration)
+                    room_id, self.user_id, self.start_date, self.duration, self.is_accessibility_requested)
                 print("\nSuccess!\n")
         self.show()
 
@@ -230,7 +242,7 @@ class ReservedRoomsAdminView(View):
         else:
             PROMPTS[PROMPT_KEY["CANCEL"]][0]['choices'] = [
                 {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
+                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accomodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
                 }
                 for reservation in reservations
             ]
