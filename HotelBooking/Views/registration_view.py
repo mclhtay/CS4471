@@ -10,7 +10,7 @@ PROMPT_KEY = {
     "FULLNAME": "full_name",
     "ADDRESS": "address",
     "CELLNUMBER": "cell_number",
-    "CREDITCARD": "creditcard_number",
+    "CREDITCARD": "credit_card_number",
 }
 
 PROMPTS = {
@@ -46,10 +46,10 @@ PROMPTS = {
         'message': "Enter your cell number",
         'name': 'cell_number',
     }],
-    "creditcard_number": [{
+    "credit_card_number": [{
         'type': 'input',
         'message': "Enter your credit card number",
-        'name': 'creditcard_number',
+        'name': 'credit_card_number',
     }],
 }
 
@@ -60,8 +60,8 @@ class RegistrationView(View):
     customer_password: str
     customer_name: str
     customer_address: str
-    customer_cellnumber: int
-    customer_creditcardnumber: int
+    customer_cell_number: int
+    customer_credit_card_number: int
 
     def __init__(self, history=[], caller=None) -> None:
         super().__init__(history, caller)
@@ -82,9 +82,9 @@ class RegistrationView(View):
         customer_password = self.prompt_and_get_answer(PROMPT_KEY['PASSWORD'])
         customer_name = self.prompt_and_get_answer(PROMPT_KEY['FULLNAME'])
         customer_address = self.prompt_and_get_answer(PROMPT_KEY['ADDRESS'])
-        customer_cellnumber = self.prompt_and_get_answer(PROMPT_KEY['CELLNUMBER'])
-        customer_creditcardnumber = self.prompt_and_get_answer(PROMPT_KEY['CREDITCARD'])
-        self.authentication_controller.create_customer(customer_id, customer_password, customer_name, customer_address, customer_cellnumber, customer_creditcardnumber)
+        customer_cell_number = self.prompt_and_get_answer(PROMPT_KEY['CELLNUMBER'])
+        customer_credit_card_number = self.prompt_and_get_answer(PROMPT_KEY['CREDITCARD'])
+        self.authentication_controller.create_customer(customer_id, customer_password, customer_name, customer_address, customer_cell_number, customer_credit_card_number)
 
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])

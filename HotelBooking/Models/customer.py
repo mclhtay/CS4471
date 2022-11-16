@@ -8,10 +8,10 @@ class Customer(SQLModel, table=True):
     customer_password: str
     customer_name: str
     customer_address: str
-    customer_cellnumber: int
-    customer_creditcardnumber: int
+    customer_cell_number: int
+    customer_credit_card_number: int
 
-    def create_customer(self, customer_id, customer_password, customer_name, customer_address, customer_cellnumber, customer_creditcardnumber):
+    def create_customer(self, customer_id, customer_password, customer_name, customer_address, customer_cell_number, customer_credit_card_number):
         engine = get_engine()
         session = Session(engine)
         customer = Customer(
@@ -19,8 +19,8 @@ class Customer(SQLModel, table=True):
             customer_password=customer_password,
             customer_name=customer_name,
             customer_address=customer_address,
-            customer_cellnumber=customer_cellnumber,
-            customer_creditcardnumber=customer_creditcardnumber
+            customer_cell_number=customer_cell_number,
+            customer_credit_card_number=customer_credit_card_number
         )
         session.add(customer)
         session.commit()

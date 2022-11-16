@@ -4,8 +4,8 @@ CREATE TABLE customer
   customer_password VARCHAR(50) NOT NULL,
   customer_name VARCHAR(100),
   customer_address VARCHAR(120),
-  customer_cellnumber INTEGER,
-  customer_creditcardnumber INTEGER
+  customer_cell_number INTEGER,
+  customer_credit_card_number INTEGER
 );
 
 CREATE TABLE administrator

@@ -22,5 +22,5 @@ class AuthenticationController(Controller):
         return self.customer.customer_exists(id)
 
     def create_customer(self, customer_id: str, customer_password: str, customer_name: str,
-    customer_address: str, customer_cellnumber: int, customer_creditcardnumber: int):
-        return self.customer.create_customer(customer_id, customer_password, customer_name, customer_address, customer_cellnumber, customer_creditcardnumber)
+    customer_address: str, customer_cell_number: int, customer_credit_card_number: int):
+        return self.customer.create_customer(customer_id, customer_password, customer_name, customer_address, customer_cell_number, customer_credit_card_number)
