@@ -44,6 +44,7 @@ PROMPTS = {
         'type': 'input',
         'message': "Enter the number of days you want to reserve",
         'name': 'duration',
+        'validate': lambda x: x.isdigit() or "Please erase value and enter a valid number!"
     }],
     "accommodation": [{
         'type': 'confirm',
@@ -144,6 +145,7 @@ class BookReservationView(View):
             self.duration = int(
                 self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
             self.is_accessibility_requested = self.prompt_and_get_answer(PROMPT_KEY['ACCOMMODATION'])
+
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type

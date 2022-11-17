@@ -6,6 +6,28 @@ from HotelBooking.Models.utils import get_engine
 class Customer(SQLModel, table=True):
     customer_id: str = Field(primary_key=True)
     customer_password: str
+    customer_name: str
+    customer_address: str
+    customer_cell_number: int
+    customer_credit_card_number: int
+
+    def create_customer(self, customer_id, customer_password, customer_name, customer_address, customer_cell_number, customer_credit_card_number):
+        engine = get_engine()
+        session = Session(engine)
+        customer = Customer(
+            customer_id=customer_id,
+            customer_password=customer_password,
+            customer_name=customer_name,
+            customer_address=customer_address,
+            customer_cell_number=customer_cell_number,
+            customer_credit_card_number=customer_credit_card_number
+        )
+        session.add(customer)
+        session.commit()
+        session.refresh(customer)
+        session.close()
+
+        return customer
 
     def authenticate_customer(self, id: str, password: str) -> bool:
         engine = get_engine()
@@ -14,3 +36,10 @@ class Customer(SQLModel, table=True):
                 Customer.customer_id == id).where(Customer.customer_password == password)
             customer = session.exec(statement).first()
             return customer != None
+
+    def customer_exists(self, id: str) -> bool:
+        engine = get_engine()
+        with Session(engine) as session:
+            statement = select(Customer).where(Customer.customer_id == id)
+            customer = session.exec(statement).first()
+            return customer!=None

@@ -1,7 +1,11 @@
 CREATE TABLE customer
 (
   customer_id VARCHAR(10) NOT NULL PRIMARY KEY,
-  customer_password VARCHAR(50) NOT NULL
+  customer_password VARCHAR(50) NOT NULL,
+  customer_name VARCHAR(100),
+  customer_address VARCHAR(120),
+  customer_cell_number INTEGER,
+  customer_credit_card_number INTEGER
 );
 
 CREATE TABLE administrator
