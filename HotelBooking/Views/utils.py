@@ -14,7 +14,7 @@ def medium_print(text: str):
 def error_print(prefix: str = "", suffix: str = ""):
     print(f'\n{prefix}Please try again{suffix}')
 
-def ValidateDate(date_text):
+def validate_date(date_text):
         try:
             datetime.strptime(date_text, '%m/%d/%Y')
         except ValueError:
