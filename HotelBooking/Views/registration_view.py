@@ -27,7 +27,7 @@ PROMPTS = {
         'name': 'username',
     }],
     "password": [{
-        'type': 'input',
+        'type': 'password',
         'message': "Enter a password",
         'name': 'password',
     }],
@@ -45,11 +45,13 @@ PROMPTS = {
         'type': 'input',
         'message': "Enter your cell number",
         'name': 'cell_number',
+        'validate': lambda x: x.isdigit() or "Please erase value and enter a only numbers!"
     }],
     "credit_card_number": [{
         'type': 'input',
         'message': "Enter your credit card number",
         'name': 'credit_card_number',
+        'validate': lambda x: x.isdigit() or "Please erase value and enter only numbers!"
     }],
 }
 
