@@ -4,14 +4,7 @@ from HotelBooking.Controllers.bill_controller import BillController
 from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
-from datetime import datetime
-
-def ValidateDate(date_text):
-        try:
-            datetime.strptime(date_text, '%m/%d/%Y')
-        except ValueError:
-            return False
-        return True
+from HotelBooking.Views.utils import ValidateDate
 
 PROMPT_KEY = {
     "OPERATIONS": 'operations',

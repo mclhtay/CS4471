@@ -1,5 +1,5 @@
 from HotelBooking.Controllers.authentication_controller import AuthenticationController
-from HotelBooking.Views.utils import big_print, medium_print
+from HotelBooking.Views.utils import big_print
 from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
