@@ -12,15 +12,15 @@ class TestReservation:
             session = Session(engine)
 
             reservation_1 = Reservation(reservation_id="1", status="OPEN", customer_id="test",
-                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5)
+                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
             reservation_2 = Reservation(reservation_id="2", status="OPEN", customer_id="bob",
-                                        room_id="single2", bill_id="2", reservation_checkin_date="2000/11/04", reservation_stay_date=6)
+                                        room_id="single2", bill_id="2", reservation_checkin_date="2000/11/04", reservation_stay_date=6, is_accessibility_requested=1)
             reservation_3 = Reservation(reservation_id="3", status="IN_PROGRESS", customer_id="test",
-                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/05", reservation_stay_date=7)
+                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/05", reservation_stay_date=7, is_accessibility_requested=1)
             reservation_4 = Reservation(reservation_id="4", status="CLOSED", customer_id="test",
-                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/06", reservation_stay_date=8)
+                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/06", reservation_stay_date=8, is_accessibility_requested=1)
             reservation_5 = Reservation(reservation_id="5", status="CANCELED", customer_id="bob",
-                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/07", reservation_stay_date=9)
+                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/07", reservation_stay_date=9, is_accessibility_requested=1)
 
             session.add(reservation_1)
             session.add(reservation_2)
@@ -61,15 +61,15 @@ class TestReservation:
             session = Session(engine)
 
             reservation_1 = Reservation(reservation_id="1", status="OPEN", customer_id="test",
-                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5)
+                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
             reservation_2 = Reservation(reservation_id="2", status="OPEN", customer_id="bob",
-                                        room_id="single2", bill_id="2", reservation_checkin_date="2000/11/04", reservation_stay_date=6)
+                                        room_id="single2", bill_id="2", reservation_checkin_date="2000/11/04", reservation_stay_date=6, is_accessibility_requested=1)
             reservation_3 = Reservation(reservation_id="3", status="IN_PROGRESS", customer_id="test",
-                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/05", reservation_stay_date=7)
+                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/05", reservation_stay_date=7, is_accessibility_requested=1)
             reservation_4 = Reservation(reservation_id="4", status="CLOSED", customer_id="test",
-                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/06", reservation_stay_date=8)
+                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/06", reservation_stay_date=8, is_accessibility_requested=1)
             reservation_5 = Reservation(reservation_id="5", status="CANCELED", customer_id="bob",
-                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/07", reservation_stay_date=9)
+                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/07", reservation_stay_date=9, is_accessibility_requested=1)
 
             session.add(reservation_1)
             session.add(reservation_2)
@@ -103,7 +103,7 @@ class TestReservation:
             session = Session(engine)
 
             reservation_1 = Reservation(reservation_id=1, status="OPEN", customer_id="test",
-                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5)
+                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
 
             session.add(reservation_1)
             session.commit()
@@ -119,6 +119,7 @@ class TestReservation:
             assert reservation.bill_id == 1
             assert reservation.reservation_checkin_date == "2000/11/03"
             assert reservation.reservation_stay_date == 5
+            assert reservation.is_accessibility_requested ==1
 
     def test_update_reservation_status(self):
         with patch("HotelBooking.Models.reservation.get_engine") as mock_get_engine:
@@ -127,11 +128,11 @@ class TestReservation:
             SQLModel.metadata.create_all(engine)
             session = Session(engine)
             reservation_1 = Reservation(reservation_id="1", status="OPEN", customer_id="test",
-                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5)
+                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
             reservation_2 = Reservation(reservation_id="2", status="OPEN", customer_id="bob",
-                                        room_id="single2", bill_id="2", reservation_checkin_date="2000/11/04", reservation_stay_date=6)
+                                        room_id="single2", bill_id="2", reservation_checkin_date="2000/11/04", reservation_stay_date=6, is_accessibility_requested=1)
             reservation_3 = Reservation(reservation_id="3", status="IN_PROGRESS", customer_id="test",
-                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/05", reservation_stay_date=7)
+                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/05", reservation_stay_date=7, is_accessibility_requested=1)
             session.add(reservation_1)
             session.add(reservation_2)
             session.add(reservation_3)
@@ -159,11 +160,11 @@ class TestReservation:
             SQLModel.metadata.create_all(engine)
             session = Session(engine)
             reservation_1 = Reservation(reservation_id="1", status="OPEN", customer_id="test",
-                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5)
+                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
             reservation_2 = Reservation(reservation_id="2", status="OPEN", customer_id="bob",
-                                        room_id="single2", bill_id="2", reservation_checkin_date="2000/11/04", reservation_stay_date=6)
+                                        room_id="single2", bill_id="2", reservation_checkin_date="2000/11/04", reservation_stay_date=6, is_accessibility_requested=1)
             reservation_3 = Reservation(reservation_id="3", status="IN_PROGRESS", customer_id="test",
-                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/05", reservation_stay_date=7)
+                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/05", reservation_stay_date=7, is_accessibility_requested=1)
             session.add(reservation_1)
             session.add(reservation_2)
             session.add(reservation_3)
@@ -191,11 +192,11 @@ class TestReservation:
             SQLModel.metadata.create_all(engine)
             session = Session(engine)
             reservation_1 = Reservation(reservation_id="1", status="OPEN", customer_id="test",
-                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5)
+                                        room_id="single1", bill_id="1", reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
             reservation_2 = Reservation(reservation_id="2", status="OPEN", customer_id="bob",
-                                        room_id="single2", bill_id="2", reservation_checkin_date="2000/11/04", reservation_stay_date=6)
+                                        room_id="single2", bill_id="2", reservation_checkin_date="2000/11/04", reservation_stay_date=6, is_accessibility_requested=1)
             reservation_3 = Reservation(reservation_id="3", status="IN_PROGRESS", customer_id="test",
-                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/05", reservation_stay_date=7)
+                                        room_id="single3", bill_id="3", reservation_checkin_date="2000/11/05", reservation_stay_date=7, is_accessibility_requested=1)
             session.add(reservation_1)
             session.add(reservation_2)
             session.add(reservation_3)
@@ -223,11 +224,11 @@ class TestReservation:
             SQLModel.metadata.create_all(engine)
             session = Session(engine)
             reservation_1 = Reservation(reservation_id="1", status="OPEN", customer_id="test",
-                                        room_id="single1", bill_id=1, reservation_checkin_date="2000/11/03", reservation_stay_date=5)
+                                        room_id="single1", bill_id=1, reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
             reservation_2 = Reservation(reservation_id="2", status="OPEN", customer_id="bob",
-                                        room_id="single2", bill_id=2, reservation_checkin_date="2000/11/04", reservation_stay_date=6)
+                                        room_id="single2", bill_id=2, reservation_checkin_date="2000/11/04", reservation_stay_date=6, is_accessibility_requested=1)
             reservation_3 = Reservation(reservation_id="3", status="IN_PROGRESS", customer_id="test",
-                                        room_id="single3", bill_id=3, reservation_checkin_date="2000/11/05", reservation_stay_date=7)
+                                        room_id="single3", bill_id=3, reservation_checkin_date="2000/11/05", reservation_stay_date=7, is_accessibility_requested=1)
             session.add(reservation_1)
             session.add(reservation_2)
             session.add(reservation_3)
@@ -260,8 +261,9 @@ class TestReservation:
             expect_bill_id = 1
             expect_reservation_checkin_date = "2000/11/03"
             expect_reservation_stay_date = 5
+            expect_is_accessibility_requested = 1
             reservation_1 = Reservation().create_reservation(expect_status, expect_customer_id, expect_room_id,
-                                                             expect_bill_id, expect_reservation_checkin_date, expect_reservation_stay_date)
+                                                             expect_bill_id, expect_reservation_checkin_date, expect_reservation_stay_date, expect_is_accessibility_requested)
 
             assert reservation_1.status == expect_status
             assert reservation_1.customer_id == expect_customer_id
@@ -269,6 +271,7 @@ class TestReservation:
             assert reservation_1.bill_id == expect_bill_id
             assert reservation_1.reservation_checkin_date == expect_reservation_checkin_date
             assert reservation_1.reservation_stay_date == expect_reservation_stay_date
+            assert reservation_1.is_accessibility_requested == expect_is_accessibility_requested
 
     def test_close_reservation_with_room_id(self):
         with patch("HotelBooking.Models.reservation.get_engine") as mock_get_engine:
@@ -277,7 +280,7 @@ class TestReservation:
             SQLModel.metadata.create_all(engine)
             session = Session(engine)
             reservation_1 = Reservation(reservation_id="1", status="IN_PROGRESS", customer_id="test",
-                                        room_id="single1", bill_id=1, reservation_checkin_date="2000/11/03", reservation_stay_date=5)
+                                        room_id="single1", bill_id=1, reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
             session.add(reservation_1)
             session.commit()
             session.close()

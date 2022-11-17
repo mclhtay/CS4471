@@ -23,6 +23,7 @@ class Reservation(SQLModel, table=True):
     bill_id: Optional[int] = Field(foreign_key=Bill.bill_id)
     reservation_checkin_date: str
     reservation_stay_date: int
+    is_accessibility_requested: int
 
     def get_reservations_with_status(self, status, user_id=None) -> List[Reservation]:
         engine = get_engine()
@@ -93,7 +94,7 @@ class Reservation(SQLModel, table=True):
         session.commit()
         session.close()
 
-    def create_reservation(self, status, customer_id, room_id, bill_id, reservation_checkin_date, reservation_stay_date) -> Reservation:
+    def create_reservation(self, status, customer_id, room_id, bill_id, reservation_checkin_date, reservation_stay_date, is_accessibility_requested) -> Reservation:
         engine = get_engine()
         session = Session(engine)
         reservation = Reservation(
@@ -102,7 +103,8 @@ class Reservation(SQLModel, table=True):
             room_id=room_id,
             bill_id=bill_id,
             reservation_checkin_date=reservation_checkin_date,
-            reservation_stay_date=reservation_stay_date
+            reservation_stay_date=reservation_stay_date,
+            is_accessibility_requested=is_accessibility_requested
         )
         session.add(reservation)
         session.commit()

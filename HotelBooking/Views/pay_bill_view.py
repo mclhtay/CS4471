@@ -48,17 +48,19 @@ class PayBillView(View):
     user_id: str
     start_date: str
     duration: int
+    is_accessibility_requested: int
     operation_options: List[Tuple[str, str]] = [
         ("Pay another bill", 'pay_bill'),
         ("Back", 'prev_view')
     ]
 
-    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None) -> None:
+    def __init__(self, history=[], caller=None, user_id=None, start_date=None, duration=None, is_accessibility_requested=None) -> None:
         super().__init__(history, caller)
         self.initiate_options()
         self.user_id = user_id
         self.start_date = start_date
         self.duration = duration
+        self.is_accessibility_requested = is_accessibility_requested
         self.bill_controller = BillController()
 
     def show(self):
