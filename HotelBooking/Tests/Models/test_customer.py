@@ -27,13 +27,6 @@ class TestCustomer:
             assert user_1.customer_cell_number == customer_cell_number
             assert user_1.customer_credit_card_number == customer_credit_card_number
 
-            
-
-
-
-
-
-
     def test_authenticate_customer(self):
         with patch("HotelBooking.Models.customer.get_engine") as mock_get_engine:
             mock_get_engine.return_value = create_engine("sqlite:///:memory:")

@@ -5,6 +5,8 @@ from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
 from HotelBooking.Models.room import ROOM_TYPE
+from HotelBooking.Views.utils import validate_date
+
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
     "RESERVE": 'reserve',
@@ -47,8 +49,9 @@ PROMPTS = {
     }],
     "start_date": [{
         'type': 'input',
-        'message': "Enter the start date",
+        'message': "Enter the start date in format (mm/dd/yyyy)",
         'name': 'start_date',
+        'validate': lambda x: validate_date(x) or "Please erase value and enter a valid date in (mm/dd/yyyy) format."
     }],
     "duration": [{
         'type': 'input',
@@ -215,6 +218,8 @@ class ReservedRoomsAdminView(View):
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
                 self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
+            self.is_accessibility_requested = self.prompt_and_get_answer(PROMPT_KEY['ACCOMMODATION'])
+            
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type

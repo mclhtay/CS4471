@@ -47,7 +47,7 @@ class TestRoomController:
         controller = ReservationController()
         mock_room_id = "single1"
         mock_customer_id = "test"
-        mock_start_date = "testDate"
+        mock_start_date = "09/09/2022"
         mock_duration = 5
         mock_status = "OPEN"
         mock_bill_id = 2
@@ -83,7 +83,7 @@ class TestRoomController:
         mock_room_id = "single1"
 
         res = Reservation(reservation_id=mock_reservation_id, status="OPEN", customer_id="test",
-                          room_id=mock_room_id, bill_id=mock_bill_id, reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
+                          room_id=mock_room_id, bill_id=mock_bill_id, reservation_checkin_date="03/03/2022", reservation_stay_date=5, is_accessibility_requested=1)
         mock_get_reservation_by_id.return_value = res
 
         controller = ReservationController()
@@ -118,7 +118,7 @@ class TestRoomController:
         mock_duration = 5
         mock_reservation_id = 6
         mock_customer_id = "test"
-        mock_start_date = "testDate"
+        mock_start_date = "09/09/2022"
         mock_status = "OPEN"
         mock_bill_id = 2
         mock_room_type = ROOM_TYPE["SINGLE"]
@@ -131,7 +131,7 @@ class TestRoomController:
             room_id=mock_room_id, room_type=mock_room_type)
 
         res = Reservation(reservation_id=mock_reservation_id, status="OPEN", customer_id="test",
-                          room_id=mock_room_id, bill_id=mock_bill_id, reservation_checkin_date="2000/11/03", reservation_stay_date=5, is_accessibility_requested=1)
+                          room_id=mock_room_id, bill_id=mock_bill_id, reservation_checkin_date="09/09/2022", reservation_stay_date=5, is_accessibility_requested=1)
         mock_get_reservation_by_id.return_value = res
 
         controller.modify_reservation_duration(

@@ -86,7 +86,7 @@ INSERT INTO room(room_id, room_type) VALUES("single17", "SINGLE");
 INSERT INTO room(room_id, room_type) VALUES("single18", "SINGLE");
 
 INSERT INTO room(room_id, room_type, room_status) VALUES("single19", "SINGLE", "RESERVED");
-INSERT INTO reservation(reservation_id, customer_id, room_id, bill_id, reservation_checkin_date, reservation_stay_date) VALUES(1, "test", "single19", 1, "2022-10-08 01:01:01", 2);
+INSERT INTO reservation(reservation_id, customer_id, room_id, bill_id, reservation_checkin_date, reservation_stay_date) VALUES(1, "test", "single19", 1, "12/01/2023", 2);
 INSERT INTO bill(bill_status, bill_amount, customer_id, bill_id) VALUES("PAID", 200, "test", 1);
 
 INSERT INTO room(room_id, room_type, room_status) VALUES("single20", "SINGLE", "AVAILABLE");
