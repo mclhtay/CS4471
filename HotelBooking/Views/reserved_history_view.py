@@ -11,13 +11,7 @@ PROMPT_KEY = {
 }
 
 PROMPTS = {
-    'operations': [{
-        'type': 'list',
-        'message': "Check Or pay your Bill",
-        'name': 'operations',
-        'choices': [
-        ]
-    }],
+    
     'list_reservation': [{
         'type': 'list',
         'message': "List Reservation:",
@@ -29,13 +23,6 @@ PROMPTS = {
         'type': 'list',
         'message': "List Stay:",
         'name': 'list_stay',
-        'choices': [
-        ],
-    }],
-    "final_check": [{
-        'type': 'list',
-        'message': "The total is ",
-        'name': 'final_check',
         'choices': [
         ],
     }],
@@ -56,8 +43,6 @@ class ReservationHistoryView(View):
     is_accessibility_requested: int
     duration: int
     operation_options: List[Tuple[str, str]] = [
-        ("List all reservation", 'list_reservation'),
-        ("List stay", 'list_stay'),
         ("Back", 'prev_view'),
     ]
 
@@ -71,41 +56,38 @@ class ReservationHistoryView(View):
         self.reservation_controller = ReservationController()
 
     def show(self):
-        operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
+        self.list_reservation()
+        self.list_stay()
+
+        operation = self.prompt_and_get_answer(PROMPT_KEY['BACK'])
         callable = [operation_obj[1]
                     for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
 
         getattr(self, callable)()
+       
 
     def list_stay(self):
+        print("\nStay history:\n")
         reservations = self.reservation_controller.get_stay_history(
             self.user_id)
         if len(reservations) == 0:
             print("\nThere are no stay history\n")
-            self.prompt_and_get_answer(PROMPT_KEY['BACK'])
-
         else:
             for reservation in reservations:
                 print("stay with reservation id:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with room id:" +
-                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+(" with" if reservation.is_accessibility_requested==1 else " without")+" accessibility accommodations"+"\n")
+                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+(" with" if reservation.is_accessibility_requested==1 else " without")+" accessibility accommodations"+"\n")
 
-            self.prompt_and_get_answer(PROMPT_KEY['BACK'])
-        self.show()
 
     def list_reservation(self):
+        print("\nAll reservations:\n")
         reservations = self.reservation_controller.get_reservations(
             self.user_id)
         if len(reservations) == 0:
             print("\nThere are no reservation\n")
-            self.prompt_and_get_answer(PROMPT_KEY['BACK'])
-
         else:
             for reservation in reservations:
                 print("reservation:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with status: "+reservation.status+", with room id:" +
-                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", with stay date: "+str(reservation.reservation_stay_date)+(", with" if reservation.is_accessibility_requested==1 else ", without")+" accessibility accommodations"+"\n")
-
-            self.prompt_and_get_answer(PROMPT_KEY['BACK'])
-        self.show()
+                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+(", with" if reservation.is_accessibility_requested==1 else ", without")+" accessibility accommodations"+"\n")
 
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])
@@ -124,4 +106,3 @@ class ReservationHistoryView(View):
                 "name": "Back"
             }
         )
-        PROMPTS[PROMPT_KEY['OPERATIONS']][0]['choices'] = choices
