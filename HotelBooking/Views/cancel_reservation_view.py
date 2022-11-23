@@ -76,6 +76,7 @@ class CancelReservationView(View):
             self.user_id)
         if len(reservations) == 0:
             print("\nThere are no reservation\n")
+            PROMPTS[PROMPT_KEY["BACK"]][0]['choices'] = []
             PROMPTS[PROMPT_KEY["BACK"]][0]['choices'].append(
                 {
                     "name": "Back"
