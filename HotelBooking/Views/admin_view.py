@@ -82,7 +82,6 @@ class AdminView(View):
         if operation in operations:
             callable = [operation_obj[1]
                         for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
-            print(callable)
             getattr(self, callable)()
         else:
             next = [view_obj[1]
