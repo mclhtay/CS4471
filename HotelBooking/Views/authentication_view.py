@@ -40,6 +40,9 @@ class AuthenticationView(View):
         ("Existing Customer", CustomerView),
         ("Hotel associate", AdminView),
     ]
+    operation_options: List[Tuple[str, str]] = [
+        ("Quit", 'quit_system'),
+    ]
     authentication_controller: AuthenticationController
     user_id: str
     user_password: str
@@ -54,39 +57,50 @@ class AuthenticationView(View):
         self.initiate_options()
 
     def show(self):
+        self.authenticated = False
+        big_print("HOTEL BOOKING")
+
         authenticator = self.prompt_and_get_answer(PROMPT_KEY['AUTHENTICATOR'])
-
-        if authenticator == "New Customer":
+        if authenticator == "Quit":
+            self.quit_system()
+        elif authenticator == "New Customer":
             RegistrationView(self.history, self).show()
-            big_print("Login PORTAL")
-
-        while not self.authenticated:
-            self.user_id = self.prompt_and_get_answer(PROMPT_KEY['USER_ID'])
-            self.user_password = self.prompt_and_get_answer(
-                PROMPT_KEY['USER_PASSWORD'])
-            authenticated = False
-            if authenticator == "Hotel associate":
-                authenticated = self.authentication_controller.authenticate_admin(
-                    self.user_id, self.user_password)
-            else:
-                authenticated = self.authentication_controller.authenticate_customer(
-                    self.user_id, self.user_password)
-
-            self.authenticated = authenticated
-            if not authenticated:
-                error_print("Authentication Failed!\t")
-
-        if authenticator == "Hotel associate":
-            AdminView(self.history, self).show()
         else:
-            CustomerView(self.history, self, self.user_id).show()
+            while not self.authenticated:
+                self.user_id = self.prompt_and_get_answer(
+                    PROMPT_KEY['USER_ID'])
+                self.user_password = self.prompt_and_get_answer(
+                    PROMPT_KEY['USER_PASSWORD'])
+                authenticated = False
+                if authenticator == "Hotel associate":
+                    authenticated = self.authentication_controller.authenticate_admin(
+                        self.user_id, self.user_password)
+                else:
+                    authenticated = self.authentication_controller.authenticate_customer(
+                        self.user_id, self.user_password)
+
+                self.authenticated = authenticated
+                if not authenticated:
+                    error_print("Authentication Failed!\t")
+
+            if authenticator == "Hotel associate":
+                AdminView(self.history, self).show()
+            else:
+                CustomerView(self.history, self, self.user_id).show()
 
     def initiate_options(self):
+        choices = []
         for view_option in self.view_options:
             choice = {
                 'name': view_option[0]
             }
-            PROMPTS[PROMPT_KEY['AUTHENTICATOR']][0]['choices'].append(choice)
+            choices.append(choice)
+        for operation_option in self.operation_options:
+            choice = {
+                'name': operation_option[0]
+            }
+            choices.append(choice)
+        PROMPTS[PROMPT_KEY['AUTHENTICATOR']][0]['choices'] = choices
 
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])
