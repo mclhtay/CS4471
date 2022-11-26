@@ -27,6 +27,7 @@ class AdminView(View):
     ]
     operation_options: List[Tuple[str, str]] = [
         ("Back", 'prev_view'),
+        ("Quit", 'quit_system'),
     ]
 
     def __init__(self, history=[], caller=None) -> None:
