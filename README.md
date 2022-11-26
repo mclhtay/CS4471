@@ -38,7 +38,3 @@ cd HotelBooking
 ```
 
 [More Information](HotelBooking#readme)
-
-### 3. **Deployment**
-
-See `README` inside `HotelBooking/` for details
