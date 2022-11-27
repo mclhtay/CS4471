@@ -73,22 +73,27 @@ class RegistrationView(View):
     def show(self):
         big_print("Registration PORTAL")
         self.create_customer()
+        self.prev_view()
 
     def create_customer(self):
         customer_id = self.prompt_and_get_answer(PROMPT_KEY['USERNAME'])
-        is_duplicate_username = self.authentication_controller.customer_exists(customer_id)
+        is_duplicate_username = self.authentication_controller.customer_exists(
+            customer_id)
         while is_duplicate_username:
             print("Username taken, please enter a different username: ")
             customer_id = self.prompt_and_get_answer(PROMPT_KEY['USERNAME'])
-            is_duplicate_username = self.authentication_controller.customer_exists(customer_id)
+            is_duplicate_username = self.authentication_controller.customer_exists(
+                customer_id)
         customer_password = self.prompt_and_get_answer(PROMPT_KEY['PASSWORD'])
         customer_name = self.prompt_and_get_answer(PROMPT_KEY['FULLNAME'])
         customer_address = self.prompt_and_get_answer(PROMPT_KEY['ADDRESS'])
-        customer_cell_number = self.prompt_and_get_answer(PROMPT_KEY['CELLNUMBER'])
-        customer_credit_card_number = self.prompt_and_get_answer(PROMPT_KEY['CREDITCARD'])
-        self.authentication_controller.create_customer(customer_id, customer_password, customer_name, customer_address, customer_cell_number, customer_credit_card_number)
+        customer_cell_number = self.prompt_and_get_answer(
+            PROMPT_KEY['CELLNUMBER'])
+        customer_credit_card_number = self.prompt_and_get_answer(
+            PROMPT_KEY['CREDITCARD'])
+        self.authentication_controller.create_customer(
+            customer_id, customer_password, customer_name, customer_address, customer_cell_number, customer_credit_card_number)
 
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])
         return answer[key]
-

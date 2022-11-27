@@ -34,6 +34,7 @@ class CustomerView(View):
 
     ]
     operation_options: List[Tuple[str, str]] = [
+        ("Back", 'prev_view'),
         ("Quit", 'quit_system'),
     ]
 
@@ -51,7 +52,7 @@ class CustomerView(View):
         if operation in operations:
             callable = [operation_obj[1]
                         for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
-            getattr(self, callable)
+            getattr(self, callable)()
         else:
             next = [view_obj[1]
                     for view_obj in self.view_options if view_obj[0] == operation].pop()

@@ -23,6 +23,7 @@ class View:
         next(self.history, self).show()
 
     def quit_system(self) -> None:
+        big_print("Good Bye!")
         exit()
 
     def show(self) -> None:

@@ -60,6 +60,7 @@ class AdminView(View):
     operation_options: List[Tuple[str, str]] = [
         ("Check-in a customer", 'check_in_customer'),
         ("Check-out a customer", 'check_out_customer'),
+        ("Back", 'prev_view'),
         ("Quit", 'quit_system'),
     ]
     room_controller: RoomController
