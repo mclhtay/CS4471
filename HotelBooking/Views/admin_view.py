@@ -100,9 +100,11 @@ class AdminView(View):
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
 
         else:
+            
             PROMPTS[PROMPT_KEY["CHECK_IN"]][0]['choices'] = [
                 {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accommodation, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
+                    "name": (f"{reservation.room_id}, with reservation id: {str(reservation.reservation_id)}, start on: {reservation.reservation_checkin_date}, stay for: {str(reservation.reservation_stay_date)} days, \n"
+                    f"   {('with' if reservation.is_accessibility_requested==1 else 'without')} accessibility accommodation, price: {str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)}\n")
                 }
                 for reservation in reservations
             ]
@@ -115,10 +117,10 @@ class AdminView(View):
                 PROMPT_KEY['CHECK_IN'])
             if answer != "Back":
                 answer_list: List[str] = answer.replace(':', ',').split(',')
-                roomID = answer_list[0].strip()
+                room_id = answer_list[0].strip()
                 reservation_id = answer_list[2].strip()
                 room: Room = self.room_controller.get_room(
-                    roomID)
+                    room_id)
                 if room is None:
                     print("This customer does not have a reservation!")
                 else:
