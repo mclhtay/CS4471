@@ -24,6 +24,10 @@ PROMPTS = {
 
 
 class CustomerView(View):
+    """
+    This view presents the customer portal and is the first parent view
+    of all other customer related views/operations.
+    """
     user_id: str
     view_options: List[Tuple[str, View]] = [
         ("Book reservation", BookReservationView),
@@ -50,15 +54,21 @@ class CustomerView(View):
         operations = [op[0] for op in self.operation_options]
 
         if operation in operations:
+            # if user selected an operation, operations are mapped to in-file python methods
             callable = [operation_obj[1]
                         for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
+            # activate dynamically with getattr
             getattr(self, callable)()
         else:
+            # otherwise, the user selected a view option mapped to the next view they want to see
             next = [view_obj[1]
                     for view_obj in self.view_options if view_obj[0] == operation].pop()
             next(self.history, self, self.user_id).show()
 
     def initiate_options(self):
+        """
+        Fill view and operation options into pyinquirer compatible choices.
+        """
         choices = []
         for view_option in self.view_options:
             choice = {

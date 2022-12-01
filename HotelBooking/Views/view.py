@@ -13,9 +13,14 @@ class View:
     def __init__(self, history: List[View] = [], caller: View = None) -> None:
         self.history = history
         if caller != None:
+            # Append caller to history stack
             self.history.append(caller)
 
     def prev_view(self) -> None:
+        """
+        inheriting caller history as a stack, pop caller and show to trace back to 
+        previous view
+        """
         prev = self.history.pop()
         prev.show()
 

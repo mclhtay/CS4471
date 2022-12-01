@@ -2,6 +2,8 @@
 
 **NOTE**: all commands in scripts are linux commands, if you are running in windows power-shell you might need to find alternatives.
 
+**NOTE** This app runs best with Python 3.7 and has known issues with Python 3.9
+
 ## How to Run
 
 1. `./run.sh`

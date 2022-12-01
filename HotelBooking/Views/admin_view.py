@@ -54,6 +54,10 @@ PROMPTS = {
 
 
 class AdminView(View):
+    """
+    This view presents admin controls to authenticated administrators
+    """
+
     view_options: List[Tuple[str, View]] = [
         ("Book/Cancel reservation for a guest", ReservedRoomsAdminView)
     ]
@@ -81,31 +85,32 @@ class AdminView(View):
         operations = [op[0] for op in self.operation_options]
 
         if operation in operations:
+            # if user selected an operation, operations are mapped to in-file python methods
             callable = [operation_obj[1]
                         for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
+            # activate dynamically with getattr
             getattr(self, callable)()
         else:
+            # otherwise, the user selected a view option mapped to the next view they want to see
             next = [view_obj[1]
                     for view_obj in self.view_options if view_obj[0] == operation].pop()
             self.next_view(next)
-
-    
 
     def check_in_customer(self):
         customer_id = self.prompt_and_get_answer(PROMPT_KEY['CUSTOMER'])
         reservations = self.reservation_controller.get_open_reservations(
             customer_id)
         if len(reservations) == 0:
+            # if the customer does not have reservations, prompt them to return to previous menu
             print("\nThere are no reservation\n")
-
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
-
         else:
-            
+            # if a customer does have reservations, show them their reservation information
             PROMPTS[PROMPT_KEY["CHECK_IN"]][0]['choices'] = [
                 {
+                    # fill all reservation items into prompts so it can be selected by user
                     "name": (f"{reservation.room_id}, with reservation id: {str(reservation.reservation_id)}, start on: {reservation.reservation_checkin_date}, stay for: {str(reservation.reservation_stay_date)} days, \n"
-                    f"   {('with' if reservation.is_accessibility_requested==1 else 'without')} accessibility accommodation, price: {str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)}\n")
+                             f"   {('with' if reservation.is_accessibility_requested==1 else 'without')} accessibility accommodation, price: {str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)}\n")
                 }
                 for reservation in reservations
             ]
@@ -117,6 +122,7 @@ class AdminView(View):
             answer: str = self.prompt_and_get_answer(
                 PROMPT_KEY['CHECK_IN'])
             if answer != "Back":
+                # obtain options from selection string
                 answer_list: List[str] = answer.replace(':', ',').split(',')
                 room_id = answer_list[0].strip()
                 reservation_id = answer_list[2].strip()
@@ -127,12 +133,11 @@ class AdminView(View):
                 else:
                     self.room_controller.check_in_room(
                         room.room_id, reservation_id)
-
                     print("\nSuccess!\n")
+        # show main menu once operation finishes executing
         self.show()
 
     def check_out_customer(self):
-        
         checked_in_rooms = self.room_controller.get_checked_in_rooms()
         if len(checked_in_rooms) == 0:
             print("\nThere are no checked in rooms\n")
@@ -153,10 +158,13 @@ class AdminView(View):
             if room_id != "Back":
                 self.room_controller.check_out_room(room_id)
                 print("\nSuccess!\n")
+        # show main menu once operation finishes executing
         self.show()
 
-
     def initiate_options(self):
+        """
+        Fill view and operation options into pyinquirer compatible choices.
+        """
         choices = []
         for view_option in self.view_options:
             choice = {
@@ -174,8 +182,7 @@ class AdminView(View):
             {
                 "name": "Back"
             })
-            
+
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])
         return answer[key]
-

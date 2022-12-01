@@ -60,6 +60,9 @@ PROMPTS = {
 
 
 class ModifyReservationView(View):
+    """
+    This view presents operations related to customer self-service reservation modification.
+    """
     reservation_controller: ReservationController
     room_controller: RoomController
     user_id: str
@@ -78,16 +81,20 @@ class ModifyReservationView(View):
         self.user_id = user_id
         self.bill_controller = BillController()
         self.reservation_controller = ReservationController()
-        self.is_accessibility_requested=is_accessibility_requested
+        self.is_accessibility_requested = is_accessibility_requested
 
     def show(self):
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
+        # if user selected an operation, operations are mapped to in-file python methods
         callable = [operation_obj[1]
                     for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
-
+        # activate dynamically with getattr
         getattr(self, callable)()
 
     def change_start_date(self):
+        """
+        This operation lists a user's active reservations and prompts for changing their check-in date.
+        """
         reservations = self.reservation_controller.get_open_reservations(
             self.user_id)
         if len(reservations) == 0:
@@ -99,11 +106,11 @@ class ModifyReservationView(View):
                 }
             )
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
-
         else:
             PROMPTS[PROMPT_KEY["LIST_RESERVATION"]][0]['choices'] = [
+                # fill all reservations as pyinquirer compatible prompts so user can select them
                 {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accommodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
+                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested == 1 else "without")+" accessibility accommodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
                 }
                 for reservation in reservations
             ]
@@ -125,6 +132,9 @@ class ModifyReservationView(View):
         self.show()
 
     def change_duration(self):
+        """
+        This operation lists a user's active reservations and prompts for changing their stay duration.
+        """
         reservations = self.reservation_controller.get_open_reservations(
             self.user_id)
         if len(reservations) == 0:
@@ -136,11 +146,11 @@ class ModifyReservationView(View):
                 }
             )
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
-
         else:
             PROMPTS[PROMPT_KEY["LIST_RESERVATION"]][0]['choices'] = [
+                # fill all reservations as pyinquirer compatible prompts so user can select them
                 {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accommodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
+                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested == 1 else "without")+" accessibility accommodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
                 }
                 for reservation in reservations
             ]
@@ -156,7 +166,6 @@ class ModifyReservationView(View):
                 answer_list: List[str] = answer.replace(':', ',').split(',')
                 duration = int(
                     self.prompt_and_get_answer(PROMPT_KEY['CHANGE_DURATION']))
-
 
                 reservation_id = answer_list[2].strip()
                 room_id = answer_list[0].strip()
@@ -178,6 +187,9 @@ class ModifyReservationView(View):
         return answer[key]
 
     def initiate_options(self):
+        """
+        Fill view and operation options into pyinquirer compatible choices.
+        """
         choices = []
         for operation_option in self.operation_options:
             choice = {

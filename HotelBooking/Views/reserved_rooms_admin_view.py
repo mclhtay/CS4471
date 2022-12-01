@@ -84,6 +84,11 @@ PROMPTS = {
 
 
 class ReservedRoomsAdminView(View):
+    """
+    This view presents room reservation controls for an admin.
+    The operations are more straight forward for the admin in comparison to the customer version,
+    though many operations do similar tasks.
+    """
     reservation_controller: ReservationController
     room_controller: RoomController
     bill_controller: BillController
@@ -105,20 +110,27 @@ class ReservedRoomsAdminView(View):
         self.user_id = user_id
         self.start_date = start_date
         self.duration = duration
-        self.is_accessibility_requested=is_accessibility_requested
+        self.is_accessibility_requested = is_accessibility_requested
         self.bill_controller = BillController()
         self.reservation_controller = ReservationController()
 
     def show(self):
         if self.user_id == None:
+            # To reserve a room, the customer's user id has is required
             self.user_id = self.prompt_and_get_answer(PROMPT_KEY['CUSTOMER'])
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
+        # if user selected an operation, operations are mapped to in-file python methods
         callable = [operation_obj[1]
                     for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
+        # activate dynamically with getattr
         getattr(self, callable)()
 
     def reserve_room_and_check_in(self):
+        """
+        Operation to check in a walk-in customer.
+        """
         available_rooms = self.room_controller.get_available_rooms()
+        # categorize obtained avaiable rooms to better present to the user
         singles = [
             room for room in available_rooms if room.room_type == ROOM_TYPE["SINGLE"]]
         doubles = [
@@ -129,6 +141,7 @@ class ReservedRoomsAdminView(View):
             room for room in available_rooms if room.room_type == ROOM_TYPE["PRESIDENTIAL"]]
 
         PROMPTS[PROMPT_KEY["RESERVE"]][0]['choices'] = [
+            # fill pyinquirer compatible prompts so user can select from console
             {
                 "name": f'Single ({len(singles)} available)',
                 'disabled': "Not available" if len(singles) == 0 else False
@@ -152,6 +165,7 @@ class ReservedRoomsAdminView(View):
 
         room_choice = self.prompt_and_get_answer(PROMPT_KEY['RESERVE'])
         if room_choice != "BACK":
+            # obtain user requirements for a new room reservation
             room_id = [
                 room.room_id for room in available_rooms if room.room_type == room_choice].pop()
             if self.user_id == None:
@@ -161,7 +175,8 @@ class ReservedRoomsAdminView(View):
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
                 self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
-            self.is_accessibility_requested = self.prompt_and_get_answer(PROMPT_KEY['ACCOMMODATION'])
+            self.is_accessibility_requested = self.prompt_and_get_answer(
+                PROMPT_KEY['ACCOMMODATION'])
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type
@@ -175,7 +190,11 @@ class ReservedRoomsAdminView(View):
         self.show()
 
     def reserve_room(self):
+        """
+        Operation to just reserve a room
+        """
         available_rooms = self.room_controller.get_available_rooms()
+        # categorize obtained avaiable rooms to better present to the user
         singles = [
             room for room in available_rooms if room.room_type == ROOM_TYPE["SINGLE"]]
         doubles = [
@@ -186,6 +205,7 @@ class ReservedRoomsAdminView(View):
             room for room in available_rooms if room.room_type == ROOM_TYPE["PRESIDENTIAL"]]
 
         PROMPTS[PROMPT_KEY["RESERVE"]][0]['choices'] = [
+            # fill pyinquirer compatible prompts so user can select from console
             {
                 "name": f'Single ({len(singles)} available)',
                 'disabled': "Not available" if len(singles) == 0 else False
@@ -218,8 +238,8 @@ class ReservedRoomsAdminView(View):
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
                 self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
-            self.is_accessibility_requested = self.prompt_and_get_answer(PROMPT_KEY['ACCOMMODATION'])
-            
+            self.is_accessibility_requested = self.prompt_and_get_answer(
+                PROMPT_KEY['ACCOMMODATION'])
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type
@@ -233,6 +253,9 @@ class ReservedRoomsAdminView(View):
         self.show()
 
     def cancel_reservation(self):
+        """
+        Operation to cancel a reservation and cancel the bill associated
+        """
         reservations = self.reservation_controller.get_open_reservations(
             self.user_id)
         if len(reservations) == 0:
@@ -247,7 +270,7 @@ class ReservedRoomsAdminView(View):
         else:
             PROMPTS[PROMPT_KEY["CANCEL"]][0]['choices'] = [
                 {
-                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested==1 else "without")+" accessibility accommodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
+                    "name": reservation.room_id+", with reservation id: "+str(reservation.reservation_id)+", start on: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+" days, "+("with" if reservation.is_accessibility_requested == 1 else "without")+" accessibility accommodations, price: "+str(self.bill_controller.get_bill(reservation.bill_id).bill_amount)
                 }
                 for reservation in reservations
             ]
@@ -269,6 +292,9 @@ class ReservedRoomsAdminView(View):
         return answer[key]
 
     def initiate_options(self):
+        """
+        Fill view and operation options into pyinquirer compatible choices.
+        """
         choices = []
         for operation_option in self.operation_options:
             choice = {

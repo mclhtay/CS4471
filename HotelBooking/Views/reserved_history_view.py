@@ -2,6 +2,7 @@ from HotelBooking.Controllers.reservation_controller import ReservationControlle
 from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
+
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
     "LIST_RESERVATION": "list_reservation",
@@ -11,7 +12,7 @@ PROMPT_KEY = {
 }
 
 PROMPTS = {
-    
+
     'list_reservation': [{
         'type': 'list',
         'message': "List Reservation:",
@@ -37,6 +38,9 @@ PROMPTS = {
 
 
 class ReservationHistoryView(View):
+    """
+    This view presents all reservation history for a customer
+    """
     reservation_controller: ReservationController
     user_id: str
     start_date: str
@@ -52,7 +56,7 @@ class ReservationHistoryView(View):
         self.user_id = user_id
         self.start_date = start_date
         self.duration = duration
-        self.is_accessibility_requested=is_accessibility_requested
+        self.is_accessibility_requested = is_accessibility_requested
         self.reservation_controller = ReservationController()
 
     def show(self):
@@ -60,13 +64,16 @@ class ReservationHistoryView(View):
         self.list_stay()
 
         operation = self.prompt_and_get_answer(PROMPT_KEY['BACK'])
+        # if user selected an operation, operations are mapped to in-file python methods
         callable = [operation_obj[1]
                     for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
-
+        # activate dynamically with getattr
         getattr(self, callable)()
-       
 
     def list_stay(self):
+        """
+        This operation presents all the instances where a customer checked-in.
+        """
         print("\nStay history:\n")
         reservations = self.reservation_controller.get_stay_history(
             self.user_id)
@@ -75,10 +82,12 @@ class ReservationHistoryView(View):
         else:
             for reservation in reservations:
                 print("stay with reservation id:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with room id:" +
-                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+(" with" if reservation.is_accessibility_requested==1 else " without")+" accessibility accommodations"+"\n")
-
+                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+(" with" if reservation.is_accessibility_requested == 1 else " without")+" accessibility accommodations"+"\n")
 
     def list_reservation(self):
+        """
+        This operation presents all the instances where a customer reserved a room.
+        """
         print("\nAll reservations:\n")
         reservations = self.reservation_controller.get_reservations(
             self.user_id)
@@ -87,13 +96,16 @@ class ReservationHistoryView(View):
         else:
             for reservation in reservations:
                 print("reservation:"+str(reservation.reservation_id)+", with bill: "+str(reservation.bill_id)+", with status: "+reservation.status+", with room id:" +
-                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+(", with" if reservation.is_accessibility_requested==1 else ", without")+" accessibility accommodations"+"\n")
+                      str(reservation.room_id)+", with check-in date: "+reservation.reservation_checkin_date+", stay for: "+str(reservation.reservation_stay_date)+(", with" if reservation.is_accessibility_requested == 1 else ", without")+" accessibility accommodations"+"\n")
 
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])
         return answer[key]
 
     def initiate_options(self):
+        """
+        Fill view and operation options into pyinquirer compatible choices.
+        """
         choices = []
         for operation_option in self.operation_options:
             choice = {
