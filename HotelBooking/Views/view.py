@@ -32,5 +32,5 @@ class View:
     def initiate_options(self) -> None:
         pass
 
-    def prompt_for_options(self) -> None:
+    def prompt_and_get_answer(self) -> None:
         pass
