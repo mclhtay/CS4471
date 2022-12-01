@@ -35,6 +35,10 @@ PROMPTS = {
 
 
 class AuthenticationView(View):
+    """
+    This first view the user is presented with.
+    Authentication view also directs the user to whichever portal the user wishes to see.
+    """
     view_options: List[Tuple[str, View]] = [
         ("New Customer", RegistrationView),
         ("Existing Customer", CustomerView),
@@ -57,6 +61,10 @@ class AuthenticationView(View):
         self.initiate_options()
 
     def show(self):
+        """
+        Other views may trace back into this view and attempt to access a different portal,
+        the authenticated class variable must be turned to False every time to revoke access.
+        """
         self.authenticated = False
         big_print("HOTEL BOOKING")
 
@@ -64,9 +72,11 @@ class AuthenticationView(View):
         if authenticator == "Quit":
             self.quit_system()
         elif authenticator == "New Customer":
+            # take the user to register for a new customer, the view itself will trace back
             RegistrationView(self.history, self).show()
         else:
             while not self.authenticated:
+                # keep prompting for retries if the user fails to authenticate themselves.
                 self.user_id = self.prompt_and_get_answer(
                     PROMPT_KEY['USER_ID'])
                 self.user_password = self.prompt_and_get_answer(
@@ -89,6 +99,9 @@ class AuthenticationView(View):
                 CustomerView(self.history, self, self.user_id).show()
 
     def initiate_options(self):
+        """
+        Fill view and operation options into pyinquirer compatible choices.
+        """        
         choices = []
         for view_option in self.view_options:
             choice = {

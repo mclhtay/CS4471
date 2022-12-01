@@ -2,7 +2,7 @@ from HotelBooking.Controllers.bill_controller import BillController
 from HotelBooking.Views.view import View
 from typing import Tuple, List
 from PyInquirer import prompt
-from HotelBooking.Models.room import ROOM_TYPE
+
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
     "PAY_BILL": 'pay_bill',
@@ -44,6 +44,9 @@ PROMPTS = {
 
 
 class PayBillView(View):
+    """
+    This view presents options for a customer to pay their outstanding bills.
+    """
     bill_controller: BillController
     user_id: str
     start_date: str
@@ -68,21 +71,22 @@ class PayBillView(View):
 
     def show_again(self):
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
+        # if user selected an operation, operations are mapped to in-file python methods
         callable = [operation_obj[1]
                     for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
-
+        # activate dynamically with getattr
         getattr(self, callable)()
 
     def pay_bill(self):
-
+        """
+        This operation presents all outstanding bills and lets the user select which one they would like to pay.
+        """
         self.list_bills()
         print("\nWould you like to pay an outstanding bill?\n")
         available_bill = self.bill_controller.get_available_bills(self.user_id)
         if len(available_bill) == 0:
             print("\nThere are no bills\n")
             self.prompt_and_get_answer(PROMPT_KEY['BACK'])
-            
-
         else:
             PROMPTS[PROMPT_KEY["PAY_BILL"]][0]['choices'] = [
                 {
@@ -102,22 +106,23 @@ class PayBillView(View):
                 self.bill_controller.pay_bill(bill_id)
                 print("\nSuccess!\n")
                 self.show_again()
-            
         self.prev_view()
-        
 
     def list_bills(self):
         print("\nAll bills:\n")
         all_bill = self.bill_controller.get_all_bills(self.user_id)
         for bill in all_bill:
             print("Bill:"+str(bill.bill_id)+", with amount: " +
-                str(bill.bill_amount)+" is "+bill.bill_status+"\n")
+                  str(bill.bill_amount)+" is "+bill.bill_status+"\n")
 
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])
         return answer[key]
 
     def initiate_options(self):
+        """
+        Fill view and operation options into pyinquirer compatible choices.
+        """
         choices = []
         for operation_option in self.operation_options:
             choice = {

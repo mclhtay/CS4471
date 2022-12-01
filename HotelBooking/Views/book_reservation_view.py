@@ -73,6 +73,9 @@ PROMPTS = {
 
 
 class BookReservationView(View):
+    """
+    This view presents the option to have a customer self-serviced reservation operation.
+    """
     reservation_controller: ReservationController
     room_controller: RoomController
     user_id: str
@@ -99,12 +102,15 @@ class BookReservationView(View):
 
     def show_again(self):
         operation = self.prompt_and_get_answer(PROMPT_KEY['OPERATIONS'])
+        # if user selected an operation, operations are mapped to in-file python methods
         callable = [operation_obj[1]
                     for operation_obj in self.operation_options if operation_obj[0] == operation].pop()
+        # activate dynamically with getattr
         getattr(self, callable)()
 
     def reserve_room(self):
         available_rooms = self.room_controller.get_available_rooms()
+        # categorize obtained avaiable rooms to better present to the user
         singles = [
             room for room in available_rooms if room.room_type == ROOM_TYPE["SINGLE"]]
         doubles = [
@@ -115,6 +121,7 @@ class BookReservationView(View):
             room for room in available_rooms if room.room_type == ROOM_TYPE["PRESIDENTIAL"]]
 
         PROMPTS[PROMPT_KEY["RESERVE"]][0]['choices'] = [
+            # fill pyinquirer compatible prompts so user can select from console
             {
                 "name": f'Single ({len(singles)} available)',
                 'disabled': "Not available" if len(singles) == 0 else False
@@ -138,6 +145,7 @@ class BookReservationView(View):
 
         room_choice = self.prompt_and_get_answer(PROMPT_KEY['RESERVE'])
         if room_choice != "BACK":
+            # obtain user requirements for a new room reservation
             room_id = [
                 room.room_id for room in available_rooms if room.room_type == room_choice].pop()
             if self.user_id == None:
@@ -147,8 +155,8 @@ class BookReservationView(View):
                 PROMPT_KEY['START_DATE'])
             self.duration = int(
                 self.prompt_and_get_answer(PROMPT_KEY['DURATION']))
-            self.is_accessibility_requested = self.prompt_and_get_answer(PROMPT_KEY['ACCOMMODATION'])
-
+            self.is_accessibility_requested = self.prompt_and_get_answer(
+                PROMPT_KEY['ACCOMMODATION'])
 
             current_room_type = self.room_controller.get_room(
                 room_id).room_type
@@ -161,13 +169,14 @@ class BookReservationView(View):
                 print("\nSuccess!\n")
         self.show_again()
 
-   
-
     def prompt_and_get_answer(self, key: PROMPT_KEY):
         answer = prompt(PROMPTS[key])
         return answer[key]
 
     def initiate_options(self):
+        """
+        Fill view and operation options into pyinquirer compatible choices.
+        """        
         choices = []
         for operation_option in self.operation_options:
             choice = {

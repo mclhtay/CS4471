@@ -1,8 +1,8 @@
 from HotelBooking.Controllers.authentication_controller import AuthenticationController
 from HotelBooking.Views.utils import big_print
 from HotelBooking.Views.view import View
-from typing import Tuple, List
 from PyInquirer import prompt
+
 PROMPT_KEY = {
     "OPERATIONS": 'operations',
     "USERNAME": 'username',
@@ -57,6 +57,9 @@ PROMPTS = {
 
 
 class RegistrationView(View):
+    """
+    This view presents registration menu to the customer when they select they want to register.
+    """
     authentication_controller: AuthenticationController
     customer_id: str
     customer_password: str
@@ -71,11 +74,18 @@ class RegistrationView(View):
         self.authentication_controller = AuthenticationController()
 
     def show(self):
+        """
+        Shows prompts for user input, then immediately return to authentication to
+        allow for more dynamic user flow
+        """
         big_print("Registration PORTAL")
         self.create_customer()
         self.prev_view()
 
     def create_customer(self):
+        """
+        This operation prompts for all user information required to register.
+        """
         customer_id = self.prompt_and_get_answer(PROMPT_KEY['USERNAME'])
         is_duplicate_username = self.authentication_controller.customer_exists(
             customer_id)
