@@ -18,5 +18,6 @@ def get_database_address():
 
 
 def get_engine():
+    """get the database engine"""
     db_address = get_database_address()
     return create_engine(f"sqlite:///{db_address}")

@@ -16,16 +16,32 @@ RESERVATION_STATUS = {
 
 
 class Reservation(SQLModel, table=True):
+
+    # unique id of the reservation
     reservation_id: int = Field(default=None, primary_key=True)
+    # status of the reservation
     status: str
+
+    # customer id who is booking the reservation
     customer_id: Optional[str] = Field(foreign_key=Customer.customer_id)
+
+    # room id of the reservation
     room_id: Optional[str] = Field(foreign_key=Room.room_id)
+
+    # bill id which is related with the reservation
     bill_id: Optional[int] = Field(foreign_key=Bill.bill_id)
+
+    # check-in date of the reservation
     reservation_checkin_date: str
+
+    # length of the reservation
     reservation_stay_date: int
+
+    # is accessibility requested, 1 represent true and 0 represent false
     is_accessibility_requested: int
 
     def get_reservations_with_status(self, status, user_id=None) -> List[Reservation]:
+        """get the all reservation of a user with a given status"""
         engine = get_engine()
         session = Session(engine)
         statement = select(Reservation).where(
@@ -38,6 +54,7 @@ class Reservation(SQLModel, table=True):
         return reservations
 
     def get_reservations_by_customer_id(self, user_id) -> List[Reservation]:
+        """get the all reservation of a user"""
         engine = get_engine()
         session = Session(engine)
         statement = select(Reservation).where(
@@ -48,6 +65,7 @@ class Reservation(SQLModel, table=True):
         return reservations
 
     def get_reservation_by_id(self, reservation_id) -> Reservation:
+        """get the reservation object with a reservation id"""
         engine = get_engine()
         session = Session(engine)
         statement = select(Reservation).where(
@@ -58,6 +76,7 @@ class Reservation(SQLModel, table=True):
         return reservation
 
     def update_reservation_status(self, reservation_id, status):
+        """change the status of a reservation"""
         reservation = self.get_reservation_by_id(reservation_id)
         reservation.status = status
         engine = get_engine()
@@ -67,6 +86,7 @@ class Reservation(SQLModel, table=True):
         session.close()
 
     def update_reservation_start_date(self, reservation_id, newStartDate):
+        """update the start date of a given reservation"""
         reservation = self.get_reservation_by_id(reservation_id)
         reservation.reservation_checkin_date = newStartDate
         engine = get_engine()
@@ -76,6 +96,7 @@ class Reservation(SQLModel, table=True):
         session.close()
 
     def update_reservation_duration(self, reservation_id, newDuration):
+        """update the duration of a given reservation"""
         reservation = self.get_reservation_by_id(reservation_id)
         reservation.reservation_stay_date = newDuration
         engine = get_engine()
@@ -85,6 +106,7 @@ class Reservation(SQLModel, table=True):
         session.close()
 
     def update_Bill(self, reservation_id, bill_id):
+        """update the bill id of a given reservation"""
         reservation = self.get_reservation_by_id(reservation_id)
         if (reservation.bill_id != bill_id):
             reservation.bill_id = bill_id
@@ -95,6 +117,7 @@ class Reservation(SQLModel, table=True):
         session.close()
 
     def create_reservation(self, status, customer_id, room_id, bill_id, reservation_checkin_date, reservation_stay_date, is_accessibility_requested) -> Reservation:
+        """create new reservation"""
         engine = get_engine()
         session = Session(engine)
         reservation = Reservation(
@@ -114,6 +137,7 @@ class Reservation(SQLModel, table=True):
         return reservation
 
     def close_reservation_with_room_id(self, room_id):
+        """close reservation with a provided room id"""
         engine = get_engine()
         session = Session(engine)
         statement = select(Reservation).where(
